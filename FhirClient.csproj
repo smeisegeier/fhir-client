@@ -4,4 +4,11 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Hl7.Fhir.R4" Version="2.0.1" />
+    <PackageReference Include="Hl7.Fhir.Support" Version="2.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Vonk.Fhir.R4" Version="3.9.1" />
+  </ItemGroup>
+
 </Project>
