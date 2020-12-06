@@ -1,0 +1,9 @@
+﻿<h1>Main menu</h1>
+<hr />
+<form method="POST">
+    <label>PatientId</label>
+    <input type="text" placeholder="Type Id here" name="Id"/>
+    <input type="submit" />
+</form>
+<hr />
+<input type="button" class="btn btn-primary btn-lg" value="post Patient" onclick="location.href='@Url.Action("PostPatient", "Home")'" />
