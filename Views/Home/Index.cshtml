@@ -1,9 +1,7 @@
 ﻿<h1>Main menu</h1>
 <hr />
-<form method="POST">
-    <label>PatientId</label>
-    <input type="text" placeholder="Type Id here" name="Id"/>
-    <input type="submit" />
-</form>
+<input type="button" class="btn btn-primary btn-lg" value="List Patients" onclick="location.href='@Url.Action("List", "Home")'" />
 <hr />
-<input type="button" class="btn btn-primary btn-lg" value="post Patient" onclick="location.href='@Url.Action("PostPatient", "Home")'" />
+<input type="button" class="btn btn-primary btn-lg" value="Read Patient" onclick="location.href='@Url.Action("Read", "Home")'" />
+<hr />
+<input type="button" class="btn btn-primary btn-lg" value="Create Patient" onclick="location.href='@Url.Action("Create", "Home")'" />

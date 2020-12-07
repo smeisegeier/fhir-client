@@ -20,12 +20,13 @@ namespace FhirClient.Controllers
 {
     public class HomeController : Controller
     {
-        private string _baseUrl = "https://vonk.fire.ly/R4";
         private IWebHostEnvironment webHostEnvironment;
+        private Models.Repository _repo;
 
         public HomeController(IWebHostEnvironment webHost)
         {
             webHostEnvironment = webHost;
+            _repo = new Models.Repository();
         }
 
         [HttpGet]
@@ -34,32 +35,38 @@ namespace FhirClient.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult Read()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult List()
+        {
+            _repo.GetAllPatientsFromServer(10);
+            return View(new ListViewmodel(_repo.PatientsCollection));
+        }
+
+        [HttpGet]
+        public IActionResult Edit(string id)
+        {
+            var pat = _repo.GetPatientFromServerById(id);
+            return View(new EditViewmodel(pat));
+        }
+
+
         /// <summary>
-        /// Receives selected Id
+        /// Reads selected Id
         /// </summary>
         /// <param name="Id">Id of selected item (is bound to html-tag 'name', not 'id'!)</param>
-        /// <returns></returns>
         [HttpPost]
-        public string Index(int Id)
+        public string Read(string Id)
         {
-            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
-            {
-                try
-                {
-                    var pat = client.Read<Patient>("Patient/" + Id);
-                    var xd = new Hl7.Fhir.Serialization.FhirJsonSerializer();
-                    string patString = xd.SerializeToString(pat);
-                    //createJsonFile(patString);
-                    //return new JsonResult(patString);
-                    // return Json(pat);
-                    return patString;
-                }
-                catch (FhirOperationException)
-                {
-                    return Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound.ToString();
-                }
-            }
+            return null;
         }
+
+
 
         //// GET api/values/getFromExternal
         //[HttpGet, Route("getFromExternal")]
@@ -79,24 +86,18 @@ namespace FhirClient.Controllers
         //}
 
 
-        public JsonResult PostPatient()
+        // TODO Create
+        public JsonResult Create()
         {
-            var pat = createTestPatient();
-            var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl);
-            var result = client.Create(pat);
-            return Json(result);
+            return null;
         }
+
+        //TODO Delete: only my own
 
         public IActionResult Details()
         {
-            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
-            {
-                var pat4 = client.Read<Patient>("Patient/4");
-                var xd = new Hl7.Fhir.Serialization.FhirJsonSerializer();
-                string pat4String = xd.SerializeToString(pat4);
-                createJsonFile(pat4String);
-                return View(new DetailsViewmodel(pat4String));
-            }
+            return View();// (new DetailsViewmodel(pat4String));
+            
         }
 
         /// <summary>
@@ -107,6 +108,7 @@ namespace FhirClient.Controllers
         /// </remarks>
         /// <param name="baseUrl"></param>
         /// <returns>RestResponse obj</returns>
+        [Obsolete]
         public IRestResponse GetFromUrl(string baseUrl)
         {
             var client = new RestClient(baseUrl);
@@ -116,10 +118,10 @@ namespace FhirClient.Controllers
         }
 
         /// <summary>
-        /// Creates a JSON File from string
+        /// Creates a JSON File from string into files folder
         /// </summary>
         /// <param name="txt"></param>
-        public void createJsonFile(string txt)
+        private void createJsonFile(string txt)
         {
             string uploadDir = Path.Combine(webHostEnvironment.WebRootPath + "files");
             string fileName = Guid.NewGuid().ToString() + ".json";
@@ -128,22 +130,5 @@ namespace FhirClient.Controllers
         }
 
 
-        private Patient createTestPatient()
-        {
-            var MyPatient = new Patient();
-            MyPatient.Active = true;
-            MyPatient.Identifier.Add(new Identifier() { System = "http://hl7.org/fhir/sid/us-ssn", Value = "000-12-3456" });
-            MyPatient.Gender = AdministrativeGender.Male;
-            MyPatient.Deceased = new FhirDateTime("2020-04-23");
-            MyPatient.Name.Add(new HumanName()
-            {
-                Use = HumanName.NameUse.Official,
-                Family = "Stokes",
-                Given = new List<string>() { "Bran", "Deacon" },
-                Period = new Period() { Start = "2015-05-12", End = "2020-02-15" }
-            });
-            MyPatient.AddExtension("http://hl7.org/fhir/StructureDefinition/patient-birthPlace", new Address() { Country = "US" });
-            return MyPatient;
-        }
     }
 }

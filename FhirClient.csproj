@@ -11,4 +11,8 @@
     <PackageReference Include="Vonk.Fhir.R4" Version="3.9.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Shared\" />
+  </ItemGroup>
+
 </Project>
