@@ -44,7 +44,7 @@ namespace FhirClient.Controllers
         [HttpGet]
         public IActionResult List()
         {
-            _repo.GetAllPatientsFromServer(10);
+            _repo.ReloadPatientsCollection();
             return View(new ListViewmodel(_repo.PatientsCollection));
         }
 

@@ -9,13 +9,22 @@ namespace FhirClient.Models
 {
     public class Repository
     {
+        private readonly string _baseUrl = "https://vonk.fire.ly/R4";
+
         public List<Patient> PatientsCollection { get; set; }
 
-        private string _baseUrl = "https://vonk.fire.ly/R4";
-
+        // TODO dive into Observations
+        public List<Observation> ObservationsCollection { get; set; }
+        public List<Organization> OrganizationsCoellection { get; set; }
 
         public Repository()
         {
+
+        }
+
+        public void ReloadPatientsCollection()
+        {
+            PatientsCollection = getAllResourcesFromServer(new List<Patient>(), 20);
         }
 
         public Patient GetPatientFromRepoById(string id)
@@ -40,32 +49,34 @@ namespace FhirClient.Models
         }
 
         /// <summary>
-        /// Get all patients from fhir server, move them to collection
+        /// Get all resources from fhir server, move them to collection. Bases upon typ of given list
         /// </summary>
+        /// <typeparam name="T">resource (e.g. patient)</typeparam>
+        /// <param name="list">list to be filled</param>
         /// <param name="maxEntries"># of entries to be fetched</param>
-        public void GetAllPatientsFromServer(int maxEntries=10000)
+        /// <returns></returns>
+        private List<T> getAllResourcesFromServer<T>(List<T> list, int maxEntries) where T : Resource
         {
             using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
             {
-                var patientsCollection = new List<Patient>();
                 var q = new SearchParams()
-                    .LimitTo(2)
+                    .LimitTo(maxEntries) // useless
                     .OrderBy("Id", SortOrder.Ascending);
                 //q.Add("gener", "male");
-                Bundle res = client.Search<Patient>(q);
-                while (res != null && patientsCollection.Count() < maxEntries)
+                Bundle res = client.Search<T>(q);
+                while (res != null && list.Count() < maxEntries)
                 {
                     foreach (var item in res.Entry)
                     {
-                        if (item.Resource.GetType() != typeof(OperationOutcome) && patientsCollection.Count() < maxEntries)
+                        if (item.Resource.GetType() != typeof(OperationOutcome) && list.Count() < maxEntries)
                         {
-                            Patient p = (Patient)item.Resource;
-                            patientsCollection.Add(p);
+                            var p = (T)item.Resource;
+                            list.Add(p);
                         }
                     }
                     res = client.Continue(res, PageDirection.Next);
                 }
-                PatientsCollection = patientsCollection;
+                return list;
             }
         }
 
@@ -92,6 +103,36 @@ namespace FhirClient.Models
             MyPatient.AddExtension("http://hl7.org/fhir/StructureDefinition/patient-birthPlace", new Address() { Country = "US" });
             return MyPatient;
         }
-
+        /*
+                /// <summary>
+                /// Get all patients from fhir server, move them to collection
+                /// </summary>
+                /// <param name="maxEntries"># of entries to be fetched</param>
+                public void GetAllPatientsFromServer(int maxEntries=10000)
+                {
+                    using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
+                    {
+                        var patientsCollection = new List<Patient>();
+                        var q = new SearchParams()
+                            .LimitTo(2)
+                            .OrderBy("Id", SortOrder.Ascending);
+                        //q.Add("gener", "male");
+                        Bundle res = client.Search<Patient>(q);
+                        while (res != null && patientsCollection.Count() < maxEntries)
+                        {
+                            foreach (var item in res.Entry)
+                            {
+                                if (item.Resource.GetType() != typeof(OperationOutcome) && patientsCollection.Count() < maxEntries)
+                                {
+                                    Patient p = (Patient)item.Resource;
+                                    patientsCollection.Add(p);
+                                }
+                            }
+                            res = client.Continue(res, PageDirection.Next);
+                        }
+                        PatientsCollection = patientsCollection;
+                    }
+                }
+        */
     }
 }
