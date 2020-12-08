@@ -44,15 +44,20 @@ namespace FhirClient.Controllers
         [HttpGet]
         public IActionResult List()
         {
-            _repo.ReloadPatientsCollection();
-            return View(new ListViewmodel(_repo.PatientsCollection));
+            return View(new ListViewmodel(_repo.GetPatients()));
         }
 
         [HttpGet]
         public IActionResult Edit(string id)
         {
-            var pat = _repo.GetPatientFromServerById(id);
-            return View(new EditViewmodel(pat));
+            return View(new EditViewmodel(_repo.GetPatientFromServerById(id)));
+        }
+
+        [HttpGet]
+        public string ToJson(string id)
+        {
+            // TODO bad code
+            return _repo.GetJson(_repo.GetPatientFromServerById(id));
         }
 
 

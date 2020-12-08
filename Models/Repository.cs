@@ -11,25 +11,21 @@ namespace FhirClient.Models
     {
         private readonly string _baseUrl = "https://vonk.fire.ly/R4";
 
-        public List<Patient> PatientsCollection { get; set; }
+        public Repository() {        }
 
-        // TODO dive into Observations
-        public List<Observation> ObservationsCollection { get; set; }
-        public List<Organization> OrganizationsCoellection { get; set; }
-
-        public Repository()
+        public List<Patient> GetPatients()
         {
-
+            return getAllResourcesFromServer(new List<Patient>(), 20);
         }
 
-        public void ReloadPatientsCollection()
+        public List<Observation> GetObservations()
         {
-            PatientsCollection = getAllResourcesFromServer(new List<Patient>(), 20);
+            return getAllResourcesFromServer(new List<Observation>(), 20);
         }
 
-        public Patient GetPatientFromRepoById(string id)
+        public List<Organization> GetOrganizations()
         {
-            return PatientsCollection.FirstOrDefault(i => i.Id == id);
+            return getAllResourcesFromServer(new List<Organization>(), 20);
         }
 
         public Patient GetPatientFromServerById(string id)

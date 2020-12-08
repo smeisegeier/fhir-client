@@ -1,6 +1,7 @@
 ﻿using Hl7.Fhir.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,10 +22,13 @@ namespace FhirClient.Viewmodels
         { 
             get 
             { 
-                return _patient.Name.FirstOrDefault().Family;
+                return _patient.Name.FirstOrDefault()?.Family;
             } 
         }
         public string BirthDate { get { return _patient.BirthDate; } }
+        // TODO ParseIt
+        [DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
+        public DateTime? BirthDateTime { get { return IsoToDateTime(BirthDate); } }
         public bool? Active{ get { return _patient.Active; } }
         public FhirBoolean deceasedBoolean { get { return (FhirBoolean) _patient.Deceased; } }
         public FhirDateTime deceasedDateTime { get { return (FhirDateTime)_patient.Deceased; } }
@@ -39,6 +43,13 @@ namespace FhirClient.Viewmodels
         public string communication1languageCoding1system { get { return _patient.Communication.FirstOrDefault()?.Language.Coding.FirstOrDefault()?.System; } }
         public string communication1languageCoding1display { get { return _patient.Communication.FirstOrDefault()?.Language.Coding.FirstOrDefault()?.Display; } }
 
-
+        public DateTime? IsoToDateTime(string date)
+        {
+            if (string.IsNullOrEmpty(date))
+                return null;
+            if (date.Length == 8)
+                date = string.Concat(date, "T00:00:00Z");
+            return DateTime.Parse(date, null, System.Globalization.DateTimeStyles.RoundtripKind);
+        }
     }
 }
