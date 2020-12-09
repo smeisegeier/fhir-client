@@ -1,0 +1,39 @@
+﻿@model FhirClient.Viewmodels.ObservationEditViewmodel
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" readonly="readonly" style="width: 500px;"/>
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Status" class="control-label"></label>
+                <select asp-for="Status" asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.ObservationStatus>()">
+                    <option selected="selected" value="">Please select</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="codingText" class="control-label"></label>
+                <input asp-for="codingText" class="form-control" readonly="readonly" />
+                <span asp-validation-for="codingText" class="text-danger"></span>
+                <label asp-for="coding1code" class="control-label"></label>
+                <input asp-for="coding1code" class="form-control" readonly="readonly" />
+                <span asp-validation-for="coding1code" class="text-danger"></span>
+                <label asp-for="coding1system" class="control-label"></label>
+                <input asp-for="coding1system" class="form-control" readonly="readonly" />
+                <span asp-validation-for="coding1system" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<a asp-action="ObservationList">List</a>

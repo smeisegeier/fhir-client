@@ -15,7 +15,7 @@ namespace FhirClient.Models
 
         public List<Patient> GetPatients()
         {
-            return getAllResourcesFromServer(new List<Patient>(), 20);
+            return getAllResourcesFromServer(new List<Patient>(), 50);
         }
 
         public List<Observation> GetObservations()
@@ -35,6 +35,22 @@ namespace FhirClient.Models
                 try
                 {
                     return client.Read<Patient>("Patient/" + id);
+                }
+                catch (FhirOperationException)
+                {
+                    return null;
+                    //return Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound.ToString();
+                }
+            }
+        }
+
+        public Observation GetObservationFromServerById(string id)
+        {
+            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
+            {
+                try
+                {
+                    return client.Read<Observation>("Observation/" + id);
                 }
                 catch (FhirOperationException)
                 {
@@ -80,6 +96,11 @@ namespace FhirClient.Models
         {
             var xd = new Hl7.Fhir.Serialization.FhirJsonSerializer();
             return xd.SerializeToString(pat);
+        }
+        public string GetJsonObs(Observation obs)
+        {
+            var xd = new Hl7.Fhir.Serialization.FhirJsonSerializer();
+            return xd.SerializeToString(obs);
         }
 
         private Patient createTestPatient()

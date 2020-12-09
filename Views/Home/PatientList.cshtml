@@ -1,5 +1,5 @@
 ﻿@using System.Linq;
-@model FhirClient.Viewmodels.ListViewmodel
+@model FhirClient.Viewmodels.PatientListViewmodel
 
 <table class="table">
     <thead>
@@ -48,7 +48,7 @@
                         @Html.DisplayFor(i => item.BirthDate)
                     </td>
                     <td>
-                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                        @Html.ActionLink("Edit", "PatientEdit", new { id = item.Id }) |
                         @Html.ActionLink("Json", "ToJson", new { id = item.Id }) |
                         @Html.ActionLink("Delete", "Delete", new { id = item.Id })
                     </td>

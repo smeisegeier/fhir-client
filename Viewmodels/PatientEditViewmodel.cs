@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace FhirClient.Viewmodels
 {
-    public class EditViewmodel
+    public class PatientEditViewmodel
     {
         private Patient _patient;
 
-        public EditViewmodel(Patient pat)
+        public PatientEditViewmodel(Patient pat)
         {
             _patient = pat;
         }
@@ -26,12 +26,12 @@ namespace FhirClient.Viewmodels
             } 
         }
         public string BirthDate { get { return _patient.BirthDate; } }
-        // TODO ParseIt
         [DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
         public DateTime? BirthDateTime { get { return IsoToDateTime(BirthDate); } }
         public bool? Active{ get { return _patient.Active; } }
-        public FhirBoolean deceasedBoolean { get { return (FhirBoolean) _patient.Deceased; } }
-        public FhirDateTime deceasedDateTime { get { return (FhirDateTime)_patient.Deceased; } }
+
+        public FhirBoolean deceasedBoolean { get { return _patient.Deceased?.GetType() == typeof(FhirBoolean)? (FhirBoolean)_patient.Deceased : null; } }
+        public FhirDateTime deceasedDateTime { get { return _patient.Deceased?.GetType() == typeof(FhirDateTime)? (FhirDateTime)_patient.Deceased : null; } }
         public string maritalStatus1sys { get { return _patient.MaritalStatus?.Coding.FirstOrDefault()?.System; } }
         // TODO how to get Codes + Display
         public string maritalStatus1cod { get { return _patient.MaritalStatus?.Coding.FirstOrDefault()?.Code; } }
@@ -42,6 +42,10 @@ namespace FhirClient.Viewmodels
         public string communication1languageCoding1code { get { return _patient.Communication.FirstOrDefault()?.Language.Coding.FirstOrDefault()?.Code; } }
         public string communication1languageCoding1system { get { return _patient.Communication.FirstOrDefault()?.Language.Coding.FirstOrDefault()?.System; } }
         public string communication1languageCoding1display { get { return _patient.Communication.FirstOrDefault()?.Language.Coding.FirstOrDefault()?.Display; } }
+
+        public string generalPractitionier1reference { get {return _patient.GeneralPractitioner?.FirstOrDefault()?.Reference; } }
+        public string generalPractitionier1display { get { return _patient.GeneralPractitioner?.FirstOrDefault()?.Display; } }
+
 
         public DateTime? IsoToDateTime(string date)
         {

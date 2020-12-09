@@ -44,13 +44,26 @@ namespace FhirClient.Controllers
         [HttpGet]
         public IActionResult List()
         {
-            return View(new ListViewmodel(_repo.GetPatients()));
+            return View(new PatientListViewmodel(_repo.GetPatients()));
         }
 
         [HttpGet]
-        public IActionResult Edit(string id)
+        public IActionResult ObservationList()
         {
-            return View(new EditViewmodel(_repo.GetPatientFromServerById(id)));
+            return View(new ObservationListViewmodel(_repo.GetObservations()));
+        }
+
+
+        [HttpGet]
+        public IActionResult PatientEdit(string id)
+        {
+            return View(new PatientEditViewmodel(_repo.GetPatientFromServerById(id)));
+        }
+
+        [HttpGet]
+        public IActionResult ObservationEdit(string id)
+        {
+            return View(new ObservationEditViewmodel(_repo.GetObservationFromServerById(id)));
         }
 
         [HttpGet]
@@ -60,6 +73,12 @@ namespace FhirClient.Controllers
             return _repo.GetJson(_repo.GetPatientFromServerById(id));
         }
 
+        [HttpGet]
+        public string ToJsonObs(string id)
+        {
+            // TODO bad code
+            return _repo.GetJsonObs(_repo.GetObservationFromServerById(id));
+        }
 
         /// <summary>
         /// Reads selected Id
