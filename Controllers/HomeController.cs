@@ -64,7 +64,9 @@ namespace FhirClient.Controllers
         public IActionResult PatientEdit(Patient patient)
         {
             var pat = _repo.UpdatePatient(patient);
-            var content = Content("The Patient "+pat+" was successfully updated. <br /><a href=\"/Home/PatientList\">Back to List</a>");
+            var link = "<br /><a href=\"/Home/PatientList\">Back to List</a>";
+            var json = _repo.GetJson(patient);
+            var content = Content($"The Patient {pat} was successfully updated/edited.\n{json}{link}");
             content.ContentType = "text/html; charset=UTF-8";
             return content;
         }
@@ -92,7 +94,7 @@ namespace FhirClient.Controllers
         public string ToJsonObs(string id)
         {
             // TODO bad code
-            return _repo.GetJsonObs(_repo.GetObservationById(id));
+            return _repo.GetJson(_repo.GetObservationById(id));
         }
 
 

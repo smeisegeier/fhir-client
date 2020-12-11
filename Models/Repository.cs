@@ -129,15 +129,11 @@ namespace FhirClient.Models
             }
         }
 
-        public string GetJson(Patient pat)
+        public string GetJson(Resource res)
         {
             var xd = new Hl7.Fhir.Serialization.FhirJsonSerializer();
-            return xd.SerializeToString(pat);
+            return xd.SerializeToString(res);
         }
-        public string GetJsonObs(Observation obs)
-        {
-            var xd = new Hl7.Fhir.Serialization.FhirJsonSerializer();
-            return xd.SerializeToString(obs);
-        }
+
     }
 }

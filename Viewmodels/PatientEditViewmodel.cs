@@ -27,6 +27,7 @@ namespace FhirClient.Viewmodels
         public DateTime? BirthDate { get { return IsoToDateTime(_patient.BirthDate); } }
 
         public List<HumanName> Name { get { return _patient.Name; } }
+
         public List<Address> Address { get { return _patient.Address; } }
 
         public CodeableConcept MaritalStatus { get { return _patient.MaritalStatus; } }
@@ -37,7 +38,6 @@ namespace FhirClient.Viewmodels
 
         [DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
         public DateTime? deceasedDateTime { get { return _patient.Deceased?.GetType() == typeof(FhirDateTime)? IsoToDateTime(((FhirDateTime)_patient.Deceased).Value) : null; } }
-        //public FhirDateTime deceasedDateTime { get { return _patient.Deceased?.GetType() == typeof(FhirDateTime)? (FhirDateTime)_patient.Deceased: null; } }
 
         public List<Patient.ContactComponent> Contact { get { return _patient.Contact; } }
 
