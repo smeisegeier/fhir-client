@@ -49,27 +49,50 @@ namespace FhirClient.Controllers
         [HttpGet]
         public IActionResult PatientEdit(string id)
         {
-            return View(new PatientEditViewmodel(_repo.GetPatientFromServerById(id)));
+            if (string.IsNullOrEmpty(id))
+            {
+                return View(new PatientEditViewmodel(_repo.InitEmptyPatient()));
+            }
+            else
+            {
+                return View(new PatientEditViewmodel(_repo.GetPatientById(id)));
+            }
+        }
+
+
+        [HttpPost]
+        public IActionResult PatientEdit(Patient patient)
+        {
+            var pat = _repo.UpdatePatient(patient);
+            var content = Content("The Patient "+pat+" was successfully updated. <br /><a href=\"/Home/PatientList\">Back to List</a>");
+            content.ContentType = "text/html; charset=UTF-8";
+            return content;
+        }
+
+        public IActionResult PatientEditSuccess(string success)
+        {
+            ViewBag.Success = success;
+            return View();
         }
 
         [HttpGet]
         public IActionResult ObservationEdit(string id)
         {
-            return View(new ObservationEditViewmodel(_repo.GetObservationFromServerById(id)));
+            return View(new ObservationEditViewmodel(_repo.GetObservationById(id)));
         }
 
         [HttpGet]
         public string ToJson(string id)
         {
             // TODO bad code
-            return _repo.GetJson(_repo.GetPatientFromServerById(id));
+            return _repo.GetJson(_repo.GetPatientById(id));
         }
 
         [HttpGet]
         public string ToJsonObs(string id)
         {
             // TODO bad code
-            return _repo.GetJsonObs(_repo.GetObservationFromServerById(id));
+            return _repo.GetJsonObs(_repo.GetObservationById(id));
         }
 
 
@@ -126,6 +149,12 @@ namespace FhirClient.Controllers
             System.IO.File.WriteAllText(filePath, txt);
         }
 
+        public string HtmlEncode(string s)
+        {
+            return s.Replace("<", "&lt;")
+                    .Replace(">", "&gt;")
+                    .Replace("\"", "&quot;");
+        }
 
     }
 }

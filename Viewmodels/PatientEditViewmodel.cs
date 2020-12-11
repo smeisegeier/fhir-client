@@ -17,35 +17,33 @@ namespace FhirClient.Viewmodels
         }
 
         public string Id { get { return _patient.Id; } }
+        public bool? Active { get { return _patient.Active; } }
+
+        public List<Identifier> Identifier { get { return _patient.Identifier; } }
+
         public AdministrativeGender? Gender { get { return _patient.Gender; } }
-        public string FamilyName 
-        { 
-            get 
-            { 
-                return _patient.Name.FirstOrDefault()?.Family;
-            } 
-        }
-        public string BirthDate { get { return _patient.BirthDate; } }
+
         [DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
-        public DateTime? BirthDateTime { get { return IsoToDateTime(BirthDate); } }
-        public bool? Active{ get { return _patient.Active; } }
+        public DateTime? BirthDate { get { return IsoToDateTime(_patient.BirthDate); } }
+
+        public List<HumanName> Name { get { return _patient.Name; } }
+        public List<Address> Address { get { return _patient.Address; } }
+
+        public CodeableConcept MaritalStatus { get { return _patient.MaritalStatus; } }
+
+        public Hl7.Fhir.Model.DataType Deceased { get { return _patient.Deceased; } }
 
         public FhirBoolean deceasedBoolean { get { return _patient.Deceased?.GetType() == typeof(FhirBoolean)? (FhirBoolean)_patient.Deceased : null; } }
-        public FhirDateTime deceasedDateTime { get { return _patient.Deceased?.GetType() == typeof(FhirDateTime)? (FhirDateTime)_patient.Deceased : null; } }
-        public string maritalStatus1sys { get { return _patient.MaritalStatus?.Coding.FirstOrDefault()?.System; } }
-        // TODO how to get Codes + Display
-        public string maritalStatus1cod { get { return _patient.MaritalStatus?.Coding.FirstOrDefault()?.Code; } }
-        public string maritalStatus1dsp { get { return _patient.MaritalStatus?.Coding.FirstOrDefault()?.Display; } }
-        public string maritalStatusTxt { get { return _patient.MaritalStatus?.Text; } }
-        public string contact1name { get { return _patient.Contact.FirstOrDefault()?.Name.Family; } }
-        public string contact1rel1coding1cod { get { return _patient.Contact.FirstOrDefault()?.Relationship.FirstOrDefault()?.Coding.FirstOrDefault()?.Code; } }
-        public string communication1languageCoding1code { get { return _patient.Communication.FirstOrDefault()?.Language.Coding.FirstOrDefault()?.Code; } }
-        public string communication1languageCoding1system { get { return _patient.Communication.FirstOrDefault()?.Language.Coding.FirstOrDefault()?.System; } }
-        public string communication1languageCoding1display { get { return _patient.Communication.FirstOrDefault()?.Language.Coding.FirstOrDefault()?.Display; } }
 
-        public string generalPractitionier1reference { get {return _patient.GeneralPractitioner?.FirstOrDefault()?.Reference; } }
-        public string generalPractitionier1display { get { return _patient.GeneralPractitioner?.FirstOrDefault()?.Display; } }
+        [DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
+        public DateTime? deceasedDateTime { get { return _patient.Deceased?.GetType() == typeof(FhirDateTime)? IsoToDateTime(((FhirDateTime)_patient.Deceased).Value) : null; } }
+        //public FhirDateTime deceasedDateTime { get { return _patient.Deceased?.GetType() == typeof(FhirDateTime)? (FhirDateTime)_patient.Deceased: null; } }
 
+        public List<Patient.ContactComponent> Contact { get { return _patient.Contact; } }
+
+        public List<Patient.CommunicationComponent> Communication{ get { return _patient.Communication; } }
+
+        public List<ResourceReference> GeneralPractitioner { get { return _patient.GeneralPractitioner; } }
 
         public DateTime? IsoToDateTime(string date)
         {

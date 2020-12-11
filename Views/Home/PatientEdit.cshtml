@@ -1,115 +1,221 @@
 ﻿@model FhirClient.Viewmodels.PatientEditViewmodel
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" readonly="readonly" style="width: 500px;"/>
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FamilyName" class="control-label"></label>
-                <input asp-for="FamilyName" class="form-control" />
-                <span asp-validation-for="FamilyName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Gender" class="control-label"></label>
-                <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.AdministrativeGender>()">
-                    <option selected="selected" value="">Please select</option>
-                </select>
-                <span asp-validation-for="Gender" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="BirthDateTime" class="control-label"></label>
-                <input asp-for="BirthDateTime" class="form-control" />
-                <span asp-validation-for="BirthDateTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Active" class="control-label"></label>
-                <select asp-for="Active" class="form-control">
-                    <option>not set</option>
-                    <option>true</option>
-                    <option>false</option>
-                </select>
-                <span asp-validation-for="Active" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-@*                <label><input asp-for="deceasedBoolean" type="checkbox" value=""/>@Html.DisplayNameFor(m => m.deceasedBoolean)</label>
-*@
-                <label asp-for="deceasedBoolean" class="control-label"></label>
-                <select asp-for="deceasedBoolean" class="form-control">
-                    <option>not set</option>
-                    <option>true</option>
-                    <option>false</option>                    
-                </select>
-                <span asp-validation-for="deceasedBoolean" class="text-danger"></span>
+<div class="container">
+    <form asp-action="PatientEdit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <br /><h2>Patient</h2><br />
+        <div class="form-inline">
+            <label asp-for="Id" class="form-control col-sm-2 bg-warning"></label>
+            <input asp-for="Id" class="form-control col-sm-6" readonly />
+        </div>
+        <br />
+        <div class="form-inline">
+            <label asp-for="Active" class="form-control col-sm-2 bg-warning"></label>
+            <!-- bool? as datatype is special. options cannot be retrieved from enum or class -->
+            <select asp-for="Active" class="form-control">
+                <option>not set</option>
+                <option>true</option>
+                <option>false</option>
+            </select>
+            <span asp-validation-for="Active" class="text-danger"></span>
+        </div>
 
-                <label asp-for="deceasedDateTime" class="control-label"></label>
-                <input asp-for="deceasedDateTime" class="form-control" />
-                <span asp-validation-for="deceasedDateTime" class="text-danger"></span>
-            </div>
- 
-            <div class="form-group">
-                <label asp-for="maritalStatusTxt" class="control-label"></label>
-                <input asp-for="maritalStatusTxt" class="form-control" />
-                <span asp-validation-for="maritalStatusTxt" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="maritalStatus1sys" class="control-label"></label>
-                <input asp-for="maritalStatus1sys" class="form-control" />
-                <span asp-validation-for="maritalStatus1sys" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="maritalStatus1cod" class="control-label"></label>
-                <input asp-for="maritalStatus1cod" class="form-control" />
-                <span asp-validation-for="maritalStatus1cod" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="maritalStatus1dsp" class="control-label"></label>
-                <input asp-for="maritalStatus1dsp" class="form-control" />
-                <span asp-validation-for="maritalStatus1dsp" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="contact1name" class="control-label"></label>
-                <input asp-for="contact1name" class="form-control" />
-                <span asp-validation-for="contact1name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="contact1rel1coding1cod" class="control-label"></label>
-                <input asp-for="contact1rel1coding1cod" class="form-control" />
-                <span asp-validation-for="contact1rel1coding1cod" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="communication1languageCoding1code" class="control-label"></label>
-                <input asp-for="communication1languageCoding1code" class="form-control" />
-                <span asp-validation-for="communication1languageCoding1code" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="communication1languageCoding1system" class="control-label"></label>
-                <input asp-for="communication1languageCoding1system" class="form-control" />
-                <span asp-validation-for="communication1languageCoding1system" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="communication1languageCoding1display" class="control-label"></label>
-                <input asp-for="communication1languageCoding1display" class="form-control" />
-                <span asp-validation-for="communication1languageCoding1display" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="generalPractitionier1display" class="control-label"></label>
-                <input asp-for="generalPractitionier1display" class="form-control" />
-                <span asp-validation-for="generalPractitionier1display" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="generalPractitionier1reference" class="control-label"></label>
-                <input asp-for="generalPractitionier1reference" class="form-control" />
-                <span asp-validation-for="generalPractitionier1reference" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+        <br /><br /><h4>Identifier</h4><br />
+        @if (Model.Identifier is not null && Model.Identifier.Any())
+        {
+            @foreach (var item in Model.Identifier)
+            {
+                <div class="form-inline">
+                    @Html.LabelFor(i => item.Use)
+                    @Html.DropDownListFor(i => item.Use, @Html.GetEnumSelectList<Hl7.Fhir.Model.Identifier.IdentifierUse>())
+                    @Html.LabelFor(i => item.System)
+                    @Html.TextBoxFor(i => item.System, new { style = "width:20em;" })
+                    @Html.LabelFor(i => item.Value)
+                    @Html.TextBoxFor(i => item.Value, new { style = "width:8em;" })
+                </div>
+            }
+        }
+
+        <br />
+        <div class="form-inline">
+            <label asp-for="Gender" class="form-control col-sm-2 bg-warning"></label>
+            <select asp-for="Gender" class="form-control"
+                    asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.AdministrativeGender>()">
+                <option selected="selected" value="">not set</option>
+            </select>
+            <span asp-validation-for="Gender" class="text-danger"></span>
+        </div>
+        <br />
+        <div class="form-inline">
+            <label asp-for="BirthDate" class="form-control col-sm-2 bg-warning"></label>
+            <input asp-for="BirthDate" class="form-control col-sm-3" />
+        </div>
+
+        <br /><br /><h4>Name</h4><br />
+        @if (Model.Name is not null && Model.Name.Any())
+        {
+            @foreach (HumanName item in Model.Name)
+            {
+                <div class="form-inline">
+                    @Html.LabelFor(i => item.Use)
+                    @Html.DropDownListFor(i => item.Use, @Html.GetEnumSelectList<Hl7.Fhir.Model.HumanName.NameUse>())
+                    @Html.LabelFor(i => item.Text)
+                    @Html.TextBoxFor(i => item.Text, new { disabled = "disabled", @readonly = "readonly", style = "width:12em;" })
+                    @Html.LabelFor(i => item.Family)
+                    @Html.TextBoxFor(i => item.Family, new { style = "width:8em;" })
+                    @Html.LabelFor(i => item.Given)
+                    @foreach (var given in item.Given)
+                    {
+                        @Html.TextBoxFor(i => given, new { style = "width:8em;" })
+                    }
+                </div>
+            }
+        }
+
+        <br /><br /><h4>Address</h4><br />
+        @if (Model.Address is not null && Model.Address.Any())
+        {
+            @foreach (Address item in Model.Address)
+            {
+                <div class="form-inline">
+                    @Html.LabelFor(i => item.Use)
+                    @Html.DropDownListFor(i => item.Use, @Html.GetEnumSelectList<Hl7.Fhir.Model.Address.AddressUse>())
+                    @Html.LabelFor(i => item.Type)
+                    @Html.DropDownListFor(i => item.Type, @Html.GetEnumSelectList<Hl7.Fhir.Model.Address.AddressType>())
+                    @Html.LabelFor(i => item.Country)
+                    @Html.TextBoxFor(i => item.Country, new { style = "width:12em;" })
+                </div>
+                <div class="form-inline">
+                    @Html.LabelFor(i => item.City)
+                    @Html.TextBoxFor(i => item.City, new { style = "width:8em;" })
+                    @Html.LabelFor(i => item.PostalCode)
+                    @Html.TextBoxFor(i => item.PostalCode, new { style = "width:8em;" })
+                </div>
+                <div class="form-inline">
+                    @Html.LabelFor(i => item.Line)
+                    @foreach (var line in item.Line)
+                    {
+                        @Html.TextBoxFor(l => line, new { style = "width:8em;" })
+                    }
+                </div>
+            }
+        }
+
+
+        <br /><br /><h4>Marital Status</h4><br />
+        <div class="form-inline">
+            @Html.LabelFor(i => Model.MaritalStatus.Text)
+            @Html.EditorFor(i => Model.MaritalStatus.Text)
+        </div>
+        @if (Model.MaritalStatus is not null && Model.MaritalStatus.Coding.Any())
+        {
+            @foreach (Coding item in Model.MaritalStatus.Coding)
+            {
+                <div class="form-group">
+                    @Html.LabelFor(i => item.Code)
+                    @Html.TextBoxFor(i => item.Code, new { style = "width:2em;" })
+                    @Html.LabelFor(i => item.Display)
+                    @Html.EditorFor(i => item.Display)
+                    @Html.LabelFor(i => item.System)
+                    @Html.TextBoxFor(i => item.System, new { style = "width:20em;" })
+                </div>
+            }
+        }
+
+        <br /><br /><h4>Deceased</h4><br />
+        <div class="form-inline">
+            @*<label><input asp-for="deceasedBoolean" type="checkbox" value=""/>@Html.DisplayNameFor(m => m.deceasedBoolean)</label>*@
+            <label asp-for="deceasedBoolean" class="form-control col-sm-2 bg-warning"></label>
+            <select asp-for="deceasedBoolean" class="form-control">
+                <option>not set</option>
+                <option>true</option>
+                <option>false</option>
+            </select>
+            <span asp-validation-for="deceasedBoolean" class="text-danger"></span>
+            <label asp-for="deceasedDateTime" class="form-control col-sm-2 bg-warning"></label>
+            <input asp-for="deceasedDateTime" class="form-control" />
+            <span asp-validation-for="deceasedDateTime" class="text-danger"></span>
+        </div>
+
+        <br /><br /><h4>Contact</h4><br />
+        @if (Model.Contact is not null && Model.Contact.Any())
+        {
+            @foreach (var item in Model.Contact)
+            {
+                <div class="form-inline">
+                    @Html.LabelFor(i => item.Name.Family)
+                    @Html.EditorFor(i => item.Name.Family)
+                </div>
+                    @foreach(var item2 in item.Relationship)
+                    {
+                        <div class="form-inline">
+                            Relationship - Text
+                            @Html.EditorFor(i => item2.Text)
+                            @foreach (var item3 in item2.Coding)
+                            {
+                                <div class="form-inline">
+                                @Html.LabelFor(i => item3.Code)
+                                @Html.EditorFor(i => item3.Code)
+                                @Html.LabelFor(i => item3.Display)
+                                @Html.EditorFor(i => item3.Display)
+                                @Html.LabelFor(i => item3.System)
+                                @Html.EditorFor(i => item3.System)
+                                </div>
+                            }
+                        </div>
+                    }
+            }
+        }
+
+        <br /><br /><h4>Communication</h4><br />
+        @if (Model.Communication is not null && Model.Communication.Any())
+        {
+            @foreach (var item in Model.Communication)
+            {
+                <div class="form-inline">
+                    @Html.LabelFor(i => item.Preferred)
+                    @Html.EditorFor(i => item.Preferred)
+                    @Html.LabelFor(i => item.Language.Text)
+                    @Html.EditorFor(i => item.Language.Text)
+                </div>
+                @if (item.Language is not null)
+                {
+                    @foreach(var item2 in item.Language.Coding)
+                    {
+                        <div class="form-inline">
+                            @Html.LabelFor(i => item2.Code)
+                            @Html.EditorFor(i => item2.Code)
+                            @Html.LabelFor(i => item2.System)
+                            @Html.EditorFor(i => item2.System)
+                            @Html.LabelFor(i => item2.Display)
+                            @Html.EditorFor(i => item2.Display)
+                        </div>
+                    }
+                }
+            }
+        }
+
+        <br /><br /><h4>General Practitioner</h4><br />
+        @if (Model.GeneralPractitioner is not null && Model.GeneralPractitioner.Any())
+        {
+            @foreach (var item in Model.GeneralPractitioner)
+            {
+                <div class="form-inline">
+                    @Html.LabelFor(i => item.Reference)
+                    @Html.EditorFor(i => item.Reference)
+                    @Html.LabelFor(i => item.Display)
+                    @Html.EditorFor(i => item.Display)
+                    @Html.LabelFor(i => item.Url)
+                    @Html.EditorFor(i => item.Url)
+                </div>
+            }
+        }
+
+        <br /><br />
+        <div class="form-group">
+            <input type="submit" value="Save" class="btn btn-primary" />
+        </div>
+    </form>
+    <a asp-action="PatientList">List</a>
 </div>
-<a asp-action="PatientList">List</a>
+

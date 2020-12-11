@@ -15,20 +15,20 @@ namespace FhirClient.Models
 
         public List<Patient> GetPatients()
         {
-            return getAllResourcesFromServer(new List<Patient>(), 50);
+            return getAllResources(new List<Patient>(), 50);
         }
 
         public List<Observation> GetObservations()
         {
-            return getAllResourcesFromServer(new List<Observation>(), 20);
+            return getAllResources(new List<Observation>(), 20);
         }
 
         public List<Organization> GetOrganizations()
         {
-            return getAllResourcesFromServer(new List<Organization>(), 20);
+            return getAllResources(new List<Organization>(), 20);
         }
 
-        public Patient GetPatientFromServerById(string id)
+        public Patient GetPatientById(string id)
         {
             using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
             {
@@ -44,7 +44,44 @@ namespace FhirClient.Models
             }
         }
 
-        public Observation GetObservationFromServerById(string id)
+        public string UpdatePatient(Patient patient)
+        {
+            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
+            {
+                try
+                {
+                    var updatedPatient = client.Update(patient);
+                    return updatedPatient.Id;
+                }
+                catch (FhirOperationException)
+                {
+                    return string.Empty;
+                    //return Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound.ToString();
+                }
+            }
+        }
+
+        public Patient InitEmptyPatient()
+        {
+            var pat = new Patient();
+            pat.Id = Guid.NewGuid().ToString();
+            pat.Identifier = new List<Identifier>();
+            pat.Identifier.Add(new Identifier());
+            pat.MaritalStatus = new CodeableConcept();
+            pat.MaritalStatus.Coding.Add(new Coding());
+            pat.Communication = new List<Patient.CommunicationComponent>();
+            pat.Communication.Add(new Patient.CommunicationComponent());
+            pat.Contact = new List<Patient.ContactComponent>();
+            pat.Contact.Add(new Patient.ContactComponent());
+            pat.Address = new List<Address>();
+            pat.Address.Add(new Address());
+            pat.Name = new List<HumanName>();
+            pat.Name.Add(new HumanName());
+            return pat;
+        }
+
+
+        public Observation GetObservationById(string id)
         {
             using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
             {
@@ -67,13 +104,13 @@ namespace FhirClient.Models
         /// <param name="list">list to be filled</param>
         /// <param name="maxEntries"># of entries to be fetched</param>
         /// <returns></returns>
-        private List<T> getAllResourcesFromServer<T>(List<T> list, int maxEntries) where T : Resource
+        private List<T> getAllResources<T>(List<T> list, int maxEntries) where T : Resource
         {
             using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
             {
                 var q = new SearchParams()
                     .LimitTo(maxEntries) // useless
-                    .OrderBy("Id", SortOrder.Ascending);
+                    .OrderBy("lastUpdated", SortOrder.Descending);
                 //q.Add("gener", "male");
                 Bundle res = client.Search<T>(q);
                 while (res != null && list.Count() < maxEntries)
@@ -102,54 +139,5 @@ namespace FhirClient.Models
             var xd = new Hl7.Fhir.Serialization.FhirJsonSerializer();
             return xd.SerializeToString(obs);
         }
-
-        private Patient createTestPatient()
-        {
-            var MyPatient = new Patient();
-            MyPatient.Active = true;
-            MyPatient.Identifier.Add(new Identifier() { System = "http://hl7.org/fhir/sid/us-ssn", Value = "000-12-3456" });
-            MyPatient.Gender = AdministrativeGender.Male;
-            MyPatient.Deceased = new FhirDateTime("2020-04-23");
-            MyPatient.Name.Add(new HumanName()
-            {
-                Use = HumanName.NameUse.Official,
-                Family = "Stokes",
-                Given = new List<string>() { "Bran", "Deacon" },
-                Period = new Period() { Start = "2015-05-12", End = "2020-02-15" }
-            });
-            MyPatient.AddExtension("http://hl7.org/fhir/StructureDefinition/patient-birthPlace", new Address() { Country = "US" });
-            return MyPatient;
-        }
-        /*
-                /// <summary>
-                /// Get all patients from fhir server, move them to collection
-                /// </summary>
-                /// <param name="maxEntries"># of entries to be fetched</param>
-                public void GetAllPatientsFromServer(int maxEntries=10000)
-                {
-                    using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
-                    {
-                        var patientsCollection = new List<Patient>();
-                        var q = new SearchParams()
-                            .LimitTo(2)
-                            .OrderBy("Id", SortOrder.Ascending);
-                        //q.Add("gener", "male");
-                        Bundle res = client.Search<Patient>(q);
-                        while (res != null && patientsCollection.Count() < maxEntries)
-                        {
-                            foreach (var item in res.Entry)
-                            {
-                                if (item.Resource.GetType() != typeof(OperationOutcome) && patientsCollection.Count() < maxEntries)
-                                {
-                                    Patient p = (Patient)item.Resource;
-                                    patientsCollection.Add(p);
-                                }
-                            }
-                            res = client.Continue(res, PageDirection.Next);
-                        }
-                        PatientsCollection = patientsCollection;
-                    }
-                }
-        */
     }
 }

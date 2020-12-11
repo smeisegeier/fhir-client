@@ -37,7 +37,7 @@
                             @Html.DisplayFor(i => item.Id)
                         </td>
                         <td>
-                            @Html.DisplayFor(i => item.FamilyName)
+                            @Html.DisplayFor(i => item.Name.FirstOrDefault().Family)
                         </td>
                         <td>
                             @Html.DisplayFor(i => item.Gender)
@@ -58,4 +58,5 @@
             }
         </tbody>
     </table>
+    <a asp-action="Index">Index</a>
 </div>
