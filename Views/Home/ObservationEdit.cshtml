@@ -1,39 +1,39 @@
 ﻿@model FhirClient.Viewmodels.ObservationEditViewmodel
+<!-- Container spans whole width? -->
+<div class="container">
+            <form asp-action="ObservationEdit" class="form-horizontal">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <!-- Wrapping from here -->
+                <br /><h2>Observation</h2><br />
+                <div class="form-inline">
+                    <label asp-for="Id" class="form-control col-sm-2 bg-warning"></label>
+                    <input asp-for="Id" class="form-control col-sm-8" readonly/>
+                </div>
+                <br />
+                <div class="form-inline">
+                    <label asp-for="Status" class="form-control col-sm-2 bg-warning"></label>
+                    <select class="form-control" asp-for="Status" asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.ObservationStatus>()">
+                        <option selected="selected" value="">Please select</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+                <br />
+                <h4>Coding Entries</h4>
+                @foreach (Coding item in Model.Code.Coding)
+                {
+                            <div class="form-group">
+                                @Html.LabelFor(i => item.Code)
+                                @Html.EditorFor(i => item.Code)
+                                @Html.LabelFor(i => item.Display)
+                                @Html.EditorFor(i => item.Display)
+                                @Html.LabelFor(i => item.System)
+                                @Html.EditorFor(i => item.System)
+                            </div>
+                }
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" readonly="readonly" style="width: 500px;"/>
-                <span asp-validation-for="Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.ObservationStatus>()">
-                    <option selected="selected" value="">Please select</option>
-                </select>
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="codingText" class="control-label"></label>
-                <input asp-for="codingText" class="form-control" readonly="readonly" />
-                <span asp-validation-for="codingText" class="text-danger"></span>
-                <label asp-for="coding1code" class="control-label"></label>
-                <input asp-for="coding1code" class="form-control" readonly="readonly" />
-                <span asp-validation-for="coding1code" class="text-danger"></span>
-                <label asp-for="coding1system" class="control-label"></label>
-                <input asp-for="coding1system" class="form-control" readonly="readonly" />
-                <span asp-validation-for="coding1system" class="text-danger"></span>
-            </div>
-
-
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </form>
+            <a asp-action="ObservationList">List</a>
 </div>
-<a asp-action="ObservationList">List</a>

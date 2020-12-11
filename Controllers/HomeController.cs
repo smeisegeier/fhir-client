@@ -1,8 +1,6 @@
 ﻿using FhirClient.Viewmodels;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
-using Vonk.Fhir.R4;
-using Vonk.ElementModel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -36,13 +34,7 @@ namespace FhirClient.Controllers
         }
 
         [HttpGet]
-        public IActionResult Read()
-        {
-            return View();
-        }
-
-        [HttpGet]
-        public IActionResult List()
+        public IActionResult PatientList()
         {
             return View(new PatientListViewmodel(_repo.GetPatients()));
         }
@@ -80,15 +72,6 @@ namespace FhirClient.Controllers
             return _repo.GetJsonObs(_repo.GetObservationFromServerById(id));
         }
 
-        /// <summary>
-        /// Reads selected Id
-        /// </summary>
-        /// <param name="Id">Id of selected item (is bound to html-tag 'name', not 'id'!)</param>
-        [HttpPost]
-        public string Read(string Id)
-        {
-            return null;
-        }
 
 
 
@@ -110,19 +93,9 @@ namespace FhirClient.Controllers
         //}
 
 
-        // TODO Create
-        public JsonResult Create()
-        {
-            return null;
-        }
 
         //TODO Delete: only my own
 
-        public IActionResult Details()
-        {
-            return View();// (new DetailsViewmodel(pat4String));
-            
-        }
 
         /// <summary>
         /// Gets data via the GET command.

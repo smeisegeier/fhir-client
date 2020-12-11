@@ -15,11 +15,7 @@ namespace FhirClient.Viewmodels
         }
 
         public string Id { get { return _observation.Id; } }
-
         public ObservationStatus? Status { get { return _observation.Status; } }
-        public string coding1code { get { return _observation.Code.Coding.FirstOrDefault()?.Code; } }
-        public string coding1system { get { return _observation.Code.Coding.FirstOrDefault()?.System; } }
-        public string codingText { get { return _observation.Code.Text; } }
-
+        public CodeableConcept Code { get { return _observation.Code; } }
     }
 }
