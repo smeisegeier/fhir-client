@@ -21,6 +21,10 @@ namespace FhirClient.Controllers
         private IWebHostEnvironment webHostEnvironment;
         private Models.Repository _repo;
 
+        /// <summary>
+        /// Controller is recreated after every callback into actions?!
+        /// </summary>
+        /// <param name="webHost"></param>
         public HomeController(IWebHostEnvironment webHost)
         {
             webHostEnvironment = webHost;
@@ -50,12 +54,13 @@ namespace FhirClient.Controllers
         public IActionResult PatientEdit(string id)
         {
             if (string.IsNullOrEmpty(id))
-            {
+            {   // create
                 return View(new PatientEditViewmodel(_repo.InitEmptyPatient()));
             }
             else
-            {
-                return View(new PatientEditViewmodel(_repo.GetPatientById(id)));
+            {   //edit
+                Helper.edit = new PatientEditViewmodel(_repo.GetPatientById(id));
+                return View(Helper.edit);
             }
         }
 
@@ -71,10 +76,12 @@ namespace FhirClient.Controllers
             return content;
         }
 
-        public IActionResult PatientEditSuccess(string success)
+        // TODO remove _edit 
+        public IActionResult Test(Patient patient)
         {
-            ViewBag.Success = success;
-            return View();
+            Helper.edit.AddIdentifier();
+            _repo.UpdatePatient(Helper.edit._patient);
+            return RedirectToAction("PatientEdit", new { Id = Helper.edit.Id });
         }
 
         [HttpGet]
@@ -100,22 +107,7 @@ namespace FhirClient.Controllers
 
 
 
-        //// GET api/values/getFromExternal
-        //[HttpGet, Route("getFromExternal")]
-        // https://derekarends.com/how-to-create-http-request-asp-dotnet-core/
-        //public async Task<IActionResult> GetFromExternal()
-        //{
-        //    using (var response = await _httpClient.GetAsync("https://localhost:5001/api/externalEndpoint"))
-        //    {
-        //        if (!response.IsSuccessStatusCode)
-        //            return StatusCode((int)response.StatusCode);
 
-        //        var responseContent = await response.Content.ReadAsStringAsync();
-        //        var deserializedResponse = JsonConvert.DeserializeObject<List<string>>(responseContent);
-
-        //        return Ok(deserializedResponse);
-        //    }
-        //}
 
 
 
@@ -151,12 +143,24 @@ namespace FhirClient.Controllers
             System.IO.File.WriteAllText(filePath, txt);
         }
 
-        public string HtmlEncode(string s)
-        {
-            return s.Replace("<", "&lt;")
-                    .Replace(">", "&gt;")
-                    .Replace("\"", "&quot;");
-        }
+
+
+        //// GET api/values/getFromExternal
+        //[HttpGet, Route("getFromExternal")]
+        // https://derekarends.com/how-to-create-http-request-asp-dotnet-core/
+        //public async Task<IActionResult> GetFromExternal()
+        //{
+        //    using (var response = await _httpClient.GetAsync("https://localhost:5001/api/externalEndpoint"))
+        //    {
+        //        if (!response.IsSuccessStatusCode)
+        //            return StatusCode((int)response.StatusCode);
+
+        //        var responseContent = await response.Content.ReadAsStringAsync();
+        //        var deserializedResponse = JsonConvert.DeserializeObject<List<string>>(responseContent);
+
+        //        return Ok(deserializedResponse);
+        //    }
+        //}
 
     }
 }

@@ -97,6 +97,23 @@ namespace FhirClient.Models
             }
         }
 
+        // TODO check if makes sense
+        public Resource GetRecourceById(string id, Type type) 
+        {
+            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
+            {
+                try
+                {
+                    return client.Read<Resource>($"{nameof(type)}/" + id);
+                }
+                catch (FhirOperationException)
+                {
+                    return null;
+                    //return Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound.ToString();
+                }
+            }
+        }
+
         /// <summary>
         /// Get all resources from fhir server, move them to collection. Bases upon typ of given list
         /// </summary>
@@ -104,14 +121,15 @@ namespace FhirClient.Models
         /// <param name="list">list to be filled</param>
         /// <param name="maxEntries"># of entries to be fetched</param>
         /// <returns></returns>
-        private List<T> getAllResources<T>(List<T> list, int maxEntries) where T : Resource
+        private List<T> getAllResources<T>(List<T> list, int maxEntries, string resId="") where T : Resource
         {
             using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
             {
                 var q = new SearchParams()
                     .LimitTo(maxEntries) // useless
                     .OrderBy("lastUpdated", SortOrder.Descending);
-                //q.Add("gener", "male");
+                if (!string.IsNullOrEmpty(resId))
+                    q.Add("Id", resId);
                 Bundle res = client.Search<T>(q);
                 while (res != null && list.Count() < maxEntries)
                 {

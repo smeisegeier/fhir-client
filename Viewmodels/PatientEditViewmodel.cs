@@ -9,7 +9,7 @@ namespace FhirClient.Viewmodels
 {
     public class PatientEditViewmodel
     {
-        private Patient _patient;
+        public Patient _patient;
 
         public PatientEditViewmodel(Patient pat)
         {
@@ -24,7 +24,7 @@ namespace FhirClient.Viewmodels
         public AdministrativeGender? Gender { get { return _patient.Gender; } }
 
         [DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
-        public DateTime? BirthDate { get { return IsoToDateTime(_patient.BirthDate); } }
+        public DateTime? BirthDate { get { return Helper.IsoToDateTime(_patient.BirthDate); } }
 
         public List<HumanName> Name { get { return _patient.Name; } }
 
@@ -37,7 +37,7 @@ namespace FhirClient.Viewmodels
         public FhirBoolean deceasedBoolean { get { return _patient.Deceased?.GetType() == typeof(FhirBoolean)? (FhirBoolean)_patient.Deceased : null; } }
 
         [DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
-        public DateTime? deceasedDateTime { get { return _patient.Deceased?.GetType() == typeof(FhirDateTime)? IsoToDateTime(((FhirDateTime)_patient.Deceased).Value) : null; } }
+        public DateTime? deceasedDateTime { get { return _patient.Deceased?.GetType() == typeof(FhirDateTime)? Helper.IsoToDateTime(((FhirDateTime)_patient.Deceased).Value) : null; } }
 
         public List<Patient.ContactComponent> Contact { get { return _patient.Contact; } }
 
@@ -45,13 +45,11 @@ namespace FhirClient.Viewmodels
 
         public List<ResourceReference> GeneralPractitioner { get { return _patient.GeneralPractitioner; } }
 
-        public DateTime? IsoToDateTime(string date)
+        public void AddIdentifier()
         {
-            if (string.IsNullOrEmpty(date))
-                return null;
-            if (date.Length == 8)
-                date = string.Concat(date, "T00:00:00Z");
-            return DateTime.Parse(date, null, System.Globalization.DateTimeStyles.RoundtripKind);
+            _patient.Identifier.Add(new Identifier() 
+                //{Use=Hl7.Fhir.Model.Identifier.IdentifierUse.Official, System="http://example.org", Value="0815" }
+            );
         }
     }
 }
