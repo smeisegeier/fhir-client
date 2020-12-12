@@ -1,6 +1,7 @@
 ﻿@model FhirClient.Viewmodels.PatientEditViewmodel
 
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
 <div class="form-inline">
     <label asp-for="Id" class="form-control col-sm-2 bg-warning"></label>
     <input asp-for="Id" class="form-control col-sm-6" readonly />
@@ -10,30 +11,10 @@
     <label asp-for="Active" class="form-control col-sm-2 bg-warning"></label>
     <!-- bool? as datatype is special. options cannot be retrieved from enum or class -->
     <select asp-for="Active" class="form-control">
-        <option>not set</option>
         <option>true</option>
         <option>false</option>
     </select>
-    <span asp-validation-for="Active" class="text-danger"></span>
 </div>
-
-<hr /><h4>Identifier</h4><br />
-@if (Model.Identifier is not null && Model.Identifier.Any())
-{
-    @foreach (var item in Model.Identifier)
-    {
-        <div class="form-inline">
-            @Html.LabelFor(i => item.Use)
-            @Html.DropDownListFor(i => item.Use, @Html.GetEnumSelectList<Hl7.Fhir.Model.Identifier.IdentifierUse>())
-            @Html.LabelFor(i => item.System)
-            @Html.TextBoxFor(i => item.System, new { style = "width:20em;" })
-            @Html.LabelFor(i => item.Value)
-            @Html.TextBoxFor(i => item.Value, new { style = "width:8em;" })
-        </div>
-    }
-}
-@*<input type="button" value="Add" onclick="location.href='@Url.Action("Test", "Home")'" />*@
-
 <br />
 <div class="form-inline">
     <label asp-for="Gender" class="form-control col-sm-2 bg-warning"></label>
@@ -49,73 +30,93 @@
     <input asp-for="BirthDate" class="form-control col-sm-3" />
 </div>
 
-<hr /><h4>Name</h4><br />
-@if (Model.Name is not null && Model.Name.Any())
+<hr /><h4>Identifier</h4><br />
+@if (Model.Identifier is not null && Model.Identifier.Any())
 {
-    @foreach (HumanName item in Model.Name)
+    @for (int i=0; i< Model.Identifier.Count(); i++)
     {
         <div class="form-inline">
-            @Html.LabelFor(i => item.Use)
-            @Html.DropDownListFor(i => item.Use, @Html.GetEnumSelectList<Hl7.Fhir.Model.HumanName.NameUse>())
-            @Html.LabelFor(i => item.Text)
-            @Html.TextBoxFor(i => item.Text, new { disabled = "disabled", @readonly = "readonly", style = "width:12em;" })
-            @Html.LabelFor(i => item.Family)
-            @Html.TextBoxFor(i => item.Family, new { style = "width:8em;" })
-            @Html.LabelFor(i => item.Given)
-            @foreach (var given in item.Given)
-            {
-                @Html.TextBoxFor(i => given, new { style = "width:8em;" })
-            }
+            <label asp-for="Identifier[i].Use" class="form-control col-sm-1 bg-warning"></label>
+            <select asp-for="Identifier[i].Use" class="form-control"
+            asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.Identifier.IdentifierUse>()">
+            </select>
+            <label asp-for="Identifier[i].System" class="form-control col-sm-1 bg-warning"></label>
+            <input asp-for="Identifier[i].System" class="form-control" />
+            <label asp-for="Identifier[i].Value" class="form-control col-sm-1 bg-warning"></label>
+            <input asp-for="Identifier[i].Value" class="form-control" />
         </div>
     }
 }
+@*<input type="button" value="Add" onclick="location.href='@Url.Action("Test", "Home")'" />*@
+<hr /><h4>Name</h4><br />
+@if (Model.Name is not null && Model.Name.Any())
+{
+    @for (int i=0; i< Model.Name.Count(); i++)
+    {
+        <div class="form-inline">
+            <label asp-for="Name[i].Use" class="form-control col-sm-1 bg-warning"></label>
+            <select asp-for="Name[i].Use" class="form-control"
+            asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.HumanName.NameUse>()">
+            </select>
+            <label asp-for="Name[i].Text" class="form-control col-sm-1 bg-warning"></label>
+            <input asp-for="Name[i].Text" class="form-control col-sm-3" readonly/>
+            <label asp-for="Name[i].Family" class="form-control col-sm-1 bg-warning"></label>
+            <input asp-for="Name[i].Family" class="form-control col-sm-3" />
+        </div>
+        <div class="form-inline">
+            <label asp-for="Name[i].Given" class="form-control col-sm-1 bg-warning"></label>
+            @{string s="";}
+            @for (int j=0;j < Model.Name[i].Given.Count(); j++)
+            {
+                s+=@Model.Name[i].Given.ElementAt(j) + " ";
+                <!--<input asp-for="Name[i].Given.ElementAt(j)" class="form-control col-sm-2" />-->
+            }
+            <label class="form-control col-sm-3">@s</label>
+        </div>
+    }
+}
+
+
+
 
 <hr /><h4>Address</h4><br />
 @if (Model.Address is not null && Model.Address.Any())
 {
-    @foreach (Address item in Model.Address)
+    @for (int i=0; i< Model.Address.Count(); i++)
     {
         <div class="form-inline">
-            @Html.LabelFor(i => item.Use)
-            @Html.DropDownListFor(i => item.Use, @Html.GetEnumSelectList<Hl7.Fhir.Model.Address.AddressUse>())
-            @Html.LabelFor(i => item.Type)
-            @Html.DropDownListFor(i => item.Type, @Html.GetEnumSelectList<Hl7.Fhir.Model.Address.AddressType>())
-            @Html.LabelFor(i => item.Country)
-            @Html.TextBoxFor(i => item.Country, new { style = "width:12em;" })
+            <label asp-for="Address[i].Use" class="form-control col-sm-1 bg-warning"></label>
+            <select asp-for="Address[i].Use" class="form-control" asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.Address.AddressUse>()"></select>
+            <label asp-for="Address[i].Type" class="form-control col-sm-1 bg-warning"></label>
+            <select asp-for="Address[i].Type" class="form-control" asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.Address.AddressType>()"></select>
+            <label asp-for="Address[i].Country" class="form-control col-sm-1 bg-warning"></label>
+            <input asp-for="Address[i].Country" class="form-control col-sm-3" />
         </div>
         <div class="form-inline">
-            @Html.LabelFor(i => item.City)
-            @Html.TextBoxFor(i => item.City, new { style = "width:8em;" })
-            @Html.LabelFor(i => item.PostalCode)
-            @Html.TextBoxFor(i => item.PostalCode, new { style = "width:8em;" })
-        </div>
-        <div class="form-inline">
-            @Html.LabelFor(i => item.Line)
-            @foreach (var line in item.Line)
-            {
-                @Html.TextBoxFor(l => line, new { style = "width:8em;" })
-            }
+            <label asp-for="Address[i].City" class="form-control col-sm-1 bg-warning"></label>
+            <input asp-for="Address[i].City" class="form-control col-sm-3" />
+            <label asp-for="Address[i].PostalCode" class="form-control col-sm-2 bg-warning"></label>
+            <input asp-for="Address[i].PostalCode" class="form-control col-sm-3" />
         </div>
     }
 }
 
-
 <hr /><h4>Marital Status</h4><br />
 <div class="form-inline">
-    @Html.LabelFor(i => Model.MaritalStatus.Text)
-    @Html.EditorFor(i => Model.MaritalStatus.Text)
+    <label asp-for="MaritalStatus.Text" class="form-control col-sm-1 bg-warning"></label>
+    <input asp-for="MaritalStatus.Text" class="form-control col-sm-3" />
 </div>
 @if (Model.MaritalStatus is not null && Model.MaritalStatus.Coding.Any())
 {
-    @foreach (Coding item in Model.MaritalStatus.Coding)
+    @for (int i=0; i < Model.MaritalStatus.Coding.Count(); i++) 
     {
-        <div class="form-group">
-            @Html.LabelFor(i => item.Code)
-            @Html.TextBoxFor(i => item.Code, new { style = "width:2em;" })
-            @Html.LabelFor(i => item.Display)
-            @Html.EditorFor(i => item.Display)
-            @Html.LabelFor(i => item.System)
-            @Html.TextBoxFor(i => item.System, new { style = "width:20em;" })
+        <div class="form-inline">
+            <label asp-for="MaritalStatus.Coding[i].Code" class="form-control col-sm-1 bg-warning"></label>
+            <input asp-for="MaritalStatus.Coding[i].Code" class="form-control col-sm-2" />
+            <label asp-for="MaritalStatus.Coding[i].Display" class="form-control col-sm-1 bg-warning"></label>
+            <input asp-for="MaritalStatus.Coding[i].Display" class="form-control col-sm-2" />
+            <label asp-for="MaritalStatus.Coding[i].System" class="form-control col-sm-1 bg-warning"></label>
+            <input asp-for="MaritalStatus.Coding[i].System" class="form-control col-sm-3" />
         </div>
     }
 }
@@ -129,10 +130,8 @@
         <option>true</option>
         <option>false</option>
     </select>
-    <span asp-validation-for="deceasedBoolean" class="text-danger"></span>
     <label asp-for="deceasedDateTime" class="form-control col-sm-2 bg-warning"></label>
     <input asp-for="deceasedDateTime" class="form-control" />
-    <span asp-validation-for="deceasedDateTime" class="text-danger"></span>
 </div>
 
 <br /><br /><h4>Contact</h4><br />
@@ -171,10 +170,10 @@
     @foreach (var item in Model.Communication)
     {
         <div class="form-inline">
-            @Html.LabelFor(i => item.Preferred)
-            @Html.EditorFor(i => item.Preferred)
-            @Html.LabelFor(i => item.Language.Text)
-            @Html.EditorFor(i => item.Language.Text)
+            @Html.LabelFor(i => item.Preferred, new {@class="form-control col-sm-2 bg-warning"})
+            @Html.EditorFor(i => item.Preferred, new {@class="form-control col-sm-3"})
+            @Html.LabelFor(i => item.Language.Text, new {@class="form-control col-sm-2 bg-warning"})
+            @Html.EditorFor(i => item.Language.Text, new {@class="form-control col-sm-2"})
         </div>
         @if (item.Language is not null)
         {

@@ -10,7 +10,7 @@ namespace FhirClient.Viewmodels
     public class PatientEditViewmodel
     {
         // must be visible for controller
-        public Patient _patient { get; private set; }
+        public Patient _patient { get; set; }
 
         public PatientEditViewmodel(Patient pat)
         {
@@ -72,10 +72,11 @@ namespace FhirClient.Viewmodels
             }
         }
 
+        // TODO Given names still wont save
         public List<HumanName> Name 
         { 
             get 
-            { 
+            {
                 return _patient.Name; 
             } 
             set

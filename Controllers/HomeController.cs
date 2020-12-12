@@ -57,24 +57,21 @@ namespace FhirClient.Controllers
         [HttpGet]
         public IActionResult PatientCreate()
         {
-            var newPat = _repo.InitEmptyPatient();
-            createJsonFile(_repo.GetJsonPatient(newPat));
-            var newPat2 = _repo.CreatePatient(newPat);
-            createJsonFile(_repo.GetJsonPatient(newPat2));
-            return View(new PatientEditViewmodel(newPat));
+            return View(new PatientEditViewmodel(_repo.CreatePatient()));
         }
 
         [HttpGet]
         public IActionResult PatientEdit(string id)
         {
-            var pat = _repo.GetPatientById(id);
+            //var pat = _repo.GetPatientById(id);
+            var pat = _repo.GetResourceById(id, typeof(Patient));
             if (pat is null)
                 return BadRequest();
             else
-                return View(new PatientEditViewmodel(pat));
+                return View(new PatientEditViewmodel((Patient)pat));
         }
 
-
+        // TODO why not Viewmodel?
         [HttpPost]
         //public IActionResult PatientEdit(PatientEditViewmodel patientEditViewmodel)
         public IActionResult PatientEdit(Patient patient)
@@ -91,9 +88,8 @@ namespace FhirClient.Controllers
             }
 
             //var patient = patientEditViewmodel._patient;
-            var json = _repo.GetJsonPatient(patient);
-            createJsonFile(json);
             var pat = _repo.UpdatePatient(patient);
+            var json = _repo.GetJson(patient);
             var link = "<br /><a href=\"/Home/PatientList\">Back to List</a>";
             var content = Content($"The Patient {pat} was successfully updated/edited.\n{json}{link}");
             content.ContentType = "text/html; charset=UTF-8";
@@ -115,24 +111,10 @@ namespace FhirClient.Controllers
         public string ToJson(string id)
         {
             // TODO bad code
-            return _repo.GetJson(_repo.GetPatientById(id));
-        }
-
-        [HttpGet]
-        public string ToJsonObs(string id)
-        {
-            // TODO bad code
-            return _repo.GetJson(_repo.GetObservationById(id));
+            return _repo.GetJson(_repo.GetResourceById(id, typeof(Patient)));
         }
 
 
-
-
-
-
-
-
-        //TODO Delete: only my own
 
 
         /// <summary>
