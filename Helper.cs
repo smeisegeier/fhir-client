@@ -8,7 +8,7 @@ namespace FhirClient
 {
     public static class Helper
     {
-        public static PatientEditViewmodel edit;
+
 
         public static string HtmlEncode(string s)
         {

@@ -43,45 +43,66 @@ namespace FhirClient.Controllers
             return View(new PatientListViewmodel(_repo.GetPatients()));
         }
 
+        public IActionResult PatientListByMe()
+        {
+            return View(new PatientListViewmodel(_repo.GetPatientsByMe()));
+        }
+
         [HttpGet]
         public IActionResult ObservationList()
         {
             return View(new ObservationListViewmodel(_repo.GetObservations()));
         }
 
+        [HttpGet]
+        public IActionResult PatientCreate()
+        {
+            var newPat = _repo.InitEmptyPatient();
+            createJsonFile(_repo.GetJsonPatient(newPat));
+            var newPat2 = _repo.CreatePatient(newPat);
+            createJsonFile(_repo.GetJsonPatient(newPat2));
+            return View(new PatientEditViewmodel(newPat));
+        }
 
         [HttpGet]
         public IActionResult PatientEdit(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {   // create
-                return View(new PatientEditViewmodel(_repo.InitEmptyPatient()));
-            }
+            var pat = _repo.GetPatientById(id);
+            if (pat is null)
+                return BadRequest();
             else
-            {   //edit
-                Helper.edit = new PatientEditViewmodel(_repo.GetPatientById(id));
-                return View(Helper.edit);
-            }
+                return View(new PatientEditViewmodel(pat));
         }
 
 
         [HttpPost]
+        //public IActionResult PatientEdit(PatientEditViewmodel patientEditViewmodel)
         public IActionResult PatientEdit(Patient patient)
         {
+            if (!ModelState.IsValid)
+            {
+                var modelStateErrors = ModelState.Keys.SelectMany(key => ModelState[key].Errors);
+                string s = "Errors: ";
+                foreach (var item in modelStateErrors)
+                {
+                    s += ($"\n" + item.ErrorMessage);
+                }
+                return Content(s);
+            }
+
+            //var patient = patientEditViewmodel._patient;
+            var json = _repo.GetJsonPatient(patient);
+            createJsonFile(json);
             var pat = _repo.UpdatePatient(patient);
             var link = "<br /><a href=\"/Home/PatientList\">Back to List</a>";
-            var json = _repo.GetJson(patient);
             var content = Content($"The Patient {pat} was successfully updated/edited.\n{json}{link}");
             content.ContentType = "text/html; charset=UTF-8";
             return content;
         }
 
-        // TODO remove _edit 
-        public IActionResult Test(Patient patient)
+        public IActionResult PatientDelete(string id)
         {
-            Helper.edit.AddIdentifier();
-            _repo.UpdatePatient(Helper.edit._patient);
-            return RedirectToAction("PatientEdit", new { Id = Helper.edit.Id });
+            return Content(_repo.DeletePatient(id));
         }
 
         [HttpGet]
@@ -137,7 +158,7 @@ namespace FhirClient.Controllers
         /// <param name="txt"></param>
         private void createJsonFile(string txt)
         {
-            string uploadDir = Path.Combine(webHostEnvironment.WebRootPath + "files");
+            string uploadDir = Path.Combine(webHostEnvironment.WebRootPath + @"\files");
             string fileName = Guid.NewGuid().ToString() + ".json";
             string filePath = Path.Combine(uploadDir, fileName);
             System.IO.File.WriteAllText(filePath, txt);
