@@ -181,12 +181,5 @@ namespace FhirClient.Viewmodels
                 _patient.GeneralPractitioner = value;
             }
         }
-
-        //public void AddIdentifier()
-        //{
-        //    _patient.Identifier.Add(new Identifier() 
-        //        //{Use=Hl7.Fhir.Model.Identifier.IdentifierUse.Official, System="http://example.org", Value="0815" }
-        //    );
-        //}
     }
 }

@@ -75,15 +75,24 @@ namespace FhirClient.Models
 
         public Patient CreatePatient()
         {
-            Patient newPat = initEmptyPatient();
-            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
-            {
-
-                var res = client.Create(newPat);
-                return res;
-            }
+            return (Patient)createResource(initEmptyPatient());
         }
 
+        private Resource createResource(Resource resourceToBeCreated)
+        {
+            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
+            {
+                try
+                {
+                    var res = client.Create(resourceToBeCreated);
+                    return res;
+                }
+                catch (FhirOperationException)
+                {
+                    return null;
+                }
+            }
+        }
 
         public string DeletePatient(string id)
         {

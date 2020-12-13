@@ -117,22 +117,7 @@ namespace FhirClient.Controllers
 
 
 
-        /// <summary>
-        /// Gets data via the GET command.
-        /// </summary>
-        /// <remarks>
-        /// Uses ReSharper package.
-        /// </remarks>
-        /// <param name="baseUrl"></param>
-        /// <returns>RestResponse obj</returns>
-        [Obsolete]
-        public IRestResponse GetFromUrl(string baseUrl)
-        {
-            var client = new RestClient(baseUrl);
-            var request = new RestRequest();
-            var response = client.Get(request);
-            return response;
-        }
+
 
         /// <summary>
         /// Creates a JSON File from string into files folder
@@ -147,7 +132,7 @@ namespace FhirClient.Controllers
         }
 
 
-
+/*
         //// GET api/values/getFromExternal
         //[HttpGet, Route("getFromExternal")]
         // https://derekarends.com/how-to-create-http-request-asp-dotnet-core/
@@ -165,5 +150,22 @@ namespace FhirClient.Controllers
         //    }
         //}
 
+        /// <summary>
+        /// Gets data via the GET command.
+        /// </summary>
+        /// <remarks>
+        /// Uses ReSharper package.
+        /// </remarks>
+        /// <param name="baseUrl"></param>
+        /// <returns>RestResponse obj</returns>
+        [Obsolete]
+        public IRestResponse GetFromUrl(string baseUrl)
+        {
+            var client = new RestClient(baseUrl);
+            var request = new RestRequest();
+            var response = client.Get(request);
+            return response;
+        }
+*/
     }
 }
