@@ -1,5 +1,6 @@
 ﻿using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
+using Hl7.Fhir.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,34 +8,133 @@ using System.Threading.Tasks;
 
 namespace FhirClient.Models
 {
-    public class Repository
+    public interface IRepository
+    {
+        public List<Patient> GetPatients();
+        public List<Patient> GetPatientsByMe();
+        public Patient UpdatePatient(Patient patient);
+        public Patient CreatePatient();
+
+        /// <summary>
+        /// Deletes Patient.
+        /// </summary>
+        /// <param name="id">patient object</param>
+        /// <returns>success as bool</returns>
+        public bool DeletePatient(string id);
+
+        public List<Observation> GetObservations();
+        public Observation GetObservation(string id);
+
+        public Patient GetPatient(string id);
+        public string GetJson(Resource res);
+    }
+
+
+    public class Repository : IRepository
     {
         private readonly string _baseUrl = "https://vonk.fire.ly/R4";
 
         public Repository() {        }
 
-        public List<Patient> GetPatients()
-        {
-            return getAllResources(new List<Patient>(),20);
-        }
+        public List<Patient> GetPatients() => getAllResources(new List<Patient>(),20);
 
-        // TODO params dont work
         public List<Patient> GetPatientsByMe()
         {
-            SearchParams q = new SearchParams();
-            q.Add("Meta.Source", "dexterDSD");
-            q.Add("Gender", "male");
-            return getAllResources(new List<Patient>(),10,q);
+            return getAllResources(new List<Patient>(),100).FindAll(i => i.Meta.Source == "dexterDSD");
         }
 
-        public List<Observation> GetObservations()
+
+        public List<Observation> GetObservations() => getAllResources(new List<Observation>(), 20);
+
+        public List<Organization> GetOrganizations() => getAllResources(new List<Organization>(), 20);
+
+
+        public Patient UpdatePatient(Patient patient) => updateResource(cleansePatient(patient)) as Patient;
+
+        public Patient CreatePatient() => createResource(initEmptyPatient()) as Patient;
+
+        public Patient GetPatient(string id) => getResourceById(id, typeof(Patient)) as Patient;
+
+
+        public bool DeletePatient(string id) => deleteResource(GetPatient(id));
+
+        public Observation GetObservation(string id) => getResourceById(id, typeof(Observation)) as Observation;
+
+
+        /// <summary>
+        /// Gets the specified resource
+        /// </summary>
+        /// <param name="id">id as string</param>
+        /// <param name="type">the desired type, eg: typeof(Patient)</param>
+        /// <returns>Resource or null</returns>
+        private Resource getResourceById(string id, Type type)
         {
-            return getAllResources(new List<Observation>(), 20);
+            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
+            {
+                try
+                {
+                    var res = client.Read<Resource>($"{type.Name}/" + id);
+                    //if (res is Patient)
+                    //    res = improvePatient((Patient)res);
+                    return res;
+                }
+                catch (FhirOperationException)
+                {
+                    return null;
+                    //return Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound.ToString();
+                }
+            }
         }
 
-        public List<Organization> GetOrganizations()
+
+        private bool deleteResource(Resource resourceToBeDeleted)
         {
-            return getAllResources(new List<Organization>(), 20);
+            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
+            {
+                try
+                {
+                    client.Delete(resourceToBeDeleted);
+                    return true;
+                }
+                catch (FhirOperationException)
+                {
+                    return false;
+                    //return Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound.ToString();
+                }
+            }
+        }
+
+        private Resource createResource(Resource resourceToBeCreated)
+        {
+            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
+            {
+                try
+                {
+                    var res = client.Create(resourceToBeCreated);
+                    return res;
+                }
+                catch (FhirOperationException)
+                {
+                    return null;
+                }
+            }
+        }
+
+
+        private Resource updateResource(Resource resourceToBeUpdated)
+        {
+            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
+            {
+                try
+                {
+                    var res = client.Update(resourceToBeUpdated);
+                    return res;
+                }
+                catch (FhirOperationException)
+                {
+                    return null;
+                }
+            }
         }
 
 
@@ -55,62 +155,6 @@ namespace FhirClient.Models
             }
             return pat;
         }
-
-        public string UpdatePatient(Patient patient)
-        {
-            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
-            {
-                try
-                {
-                    var updatedPatient = client.Update(cleansePatient(patient));
-                    return updatedPatient.Id;
-                }
-                catch (FhirOperationException)
-                {
-                    return string.Empty;
-                    //return Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound.ToString();
-                }
-            }
-        }
-
-        public Patient CreatePatient()
-        {
-            return (Patient)createResource(initEmptyPatient());
-        }
-
-        private Resource createResource(Resource resourceToBeCreated)
-        {
-            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
-            {
-                try
-                {
-                    var res = client.Create(resourceToBeCreated);
-                    return res;
-                }
-                catch (FhirOperationException)
-                {
-                    return null;
-                }
-            }
-        }
-
-        public string DeletePatient(string id)
-        {
-            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
-            {
-                try
-                {
-                    client.Delete("Patient/" + id);
-                    return id;
-                }
-                catch (FhirOperationException)
-                {
-                    return "";
-                    //return Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound.ToString();
-                }
-            }
-        }
-
         private Patient initEmptyPatient()
         {
             var pat = new Patient();
@@ -166,42 +210,21 @@ namespace FhirClient.Models
         }
 
 
-        public Observation GetObservationById(string id)
+
+
+        private Resource getResourceFromJson(string json)
         {
-            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
+            var parser = new FhirJsonParser();
+            try
             {
-                try
-                {
-                    return client.Read<Observation>("Observation/" + id);
-                }
-                catch (FhirOperationException)
-                {
-                    return null;
-                    //return Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound.ToString();
-                }
+                Resource parsedResource = parser.Parse<Resource>(json);
+                return parsedResource;
+            }
+            catch (FormatException)
+            {
+                throw new FormatException();
             }
         }
-
-
-        public Resource GetResourceById(string id, Type type) 
-        {
-            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
-            {
-                try
-                {
-                    var res = client.Read<Resource>($"{type.Name}/" + id);
-                    //if (res is Patient)
-                    //    res = improvePatient((Patient)res);
-                    return res;
-                }
-                catch (FhirOperationException)
-                {
-                    return null;
-                    //return Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound.ToString();
-                }
-            }
-        }
-
 
 
         /// <summary>
@@ -218,7 +241,7 @@ namespace FhirClient.Models
                 if (q is null)
                 {
                     q = new SearchParams()
-                        .LimitTo(maxEntries) // useless
+                        .LimitTo(maxEntries)
                         .OrderBy("lastUpdated", SortOrder.Descending);
                 }
 
@@ -238,6 +261,7 @@ namespace FhirClient.Models
                 return list;
             }
         }
+
 
         public string GetJson(Resource res)
         {

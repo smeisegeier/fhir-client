@@ -8,11 +8,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Hl7.Fhir.Model;
-using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Net.Http.Headers;
+using FhirClient.Models;
 
 namespace FhirClient
 {
@@ -23,6 +22,7 @@ namespace FhirClient
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IRepository, Repository>();
             services.AddMvc();
         }
 

@@ -1,0 +1,29 @@
+﻿@model FhirClient.Viewmodels.PatientResultViewmodel
+
+<div class="container">
+    <h2>Resultz for @Model.Id</h2>
+    <h3>Success is @Model.Success</h3>
+    <h4>ModelErrors</h4>
+    <ol>
+        @if (@Model.ListOfModelErrors is not null && @Model.ListOfModelErrors.Any())
+        {
+            @foreach (var err in @Model.ListOfModelErrors)
+            {
+                <li>@err.ErrorMessage</li>
+            }
+        }
+    </ol>
+
+    <h4>Issues</h4>
+    <ol>
+        @if (@Model.ListOfIssues?.Issue is not null && @Model.ListOfIssues.Issue.Any())
+        {
+            @foreach (var issue in @Model.ListOfIssues.Issue)
+            {
+                <li>@issue.Details.Text</li>
+            }
+        }
+    </ol>
+    <a asp-action="PatientEdit" asp-route-id="@Model.Id" class="btn btn-info">Back to Patient</a>
+    <a asp-action="PatientList" class="btn btn-info">Back to List</a>
+</div>

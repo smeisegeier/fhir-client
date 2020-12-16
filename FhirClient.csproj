@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Hl7.Fhir.R4" Version="2.0.1" />
+    <PackageReference Include="Hl7.Fhir.Specification.R4" Version="2.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="RestSharp" Version="106.11.7" />
