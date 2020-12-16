@@ -60,19 +60,37 @@ namespace FhirClient.Controllers
         [HttpGet]
         public IActionResult PatientCreate()
         {
-            return View(new PatientEditViewmodel(_repo.CreatePatient()));
+            _repo.CreatePatient();
+            return RedirectToAction("PatientList");
+            //return View("PatientEdit",new PatientEditViewmodel(_repo.CreatePatient()));
         }
 
         [HttpGet]
         public IActionResult PatientEdit(string id)
         {
-            //var pat = _repo.GetPatientById(id);
             var pat = _repo.GetPatient(id);
             if (pat is null)
                 return BadRequest();
             else
-                return View(new PatientEditViewmodel((Patient)pat));
+            {
+                Helper.currentId = id;
+                return View(new PatientEditViewmodel(pat));
+            }
         }
+
+        [HttpGet]
+        public IActionResult GivenName(int id)
+        {
+            var patient = _repo.GetPatient(Helper.currentId);
+            if (patient is null)
+                return BadRequest();
+            else
+            {
+                var list = patient.Name.ElementAt(id).Given.ToList();
+                return View(list);
+            }
+        }
+
         /// <summary>
         /// Method is called on PatientEdit submit. Updates patient object. Forwards to Result View
         /// </summary>
@@ -115,7 +133,7 @@ namespace FhirClient.Controllers
                         break;
                     }
                 default:
-                    return NotFound();
+                    return StatusCode(StatusCodes.Status405MethodNotAllowed);
             }
             return View("PatientResult", new PatientResultViewmodel(patient.Id, success, list, outcome));
         }
@@ -123,8 +141,11 @@ namespace FhirClient.Controllers
         public IActionResult PatientDelete(string id)
         {
             _repo.DeletePatient(id);
+            return RedirectToAction("PatientList");
+/*            
             ViewBag.Message = $"Patient {id} was deleted.\n";
             return View();
+*/
         }
 
         [HttpGet]

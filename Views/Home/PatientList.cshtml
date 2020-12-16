@@ -24,7 +24,7 @@
             </tr>
         </thead>
         <tbody>
-        @if ( Model.EditViewmodelsCollection == null || !Model.EditViewmodelsCollection.Any())
+        @if (Model?.EditViewmodelsCollection == null || !Model.EditViewmodelsCollection.Any())
         {
           <tr><td colspan="4">EMPTY LIST</td></tr>
         }

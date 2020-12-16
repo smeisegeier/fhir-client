@@ -34,12 +34,13 @@ namespace FhirClient.Models
     {
         private readonly string _baseUrl = "https://vonk.fire.ly/R4";
 
-        public Repository() {        }
+        public Repository() { }
 
         public List<Patient> GetPatients() => getAllResources(new List<Patient>(),20);
 
         public List<Patient> GetPatientsByMe()
         {
+            // you may want to create searchparams..
             return getAllResources(new List<Patient>(),100).FindAll(i => i.Meta.Source == "dexterDSD");
         }
 
@@ -86,7 +87,7 @@ namespace FhirClient.Models
             }
         }
 
-
+        // TODO delegates?
         private bool deleteResource(Resource resourceToBeDeleted)
         {
             using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
@@ -171,8 +172,22 @@ namespace FhirClient.Models
             pat.Name.Add(new HumanName() 
                 {   
                     Use= HumanName.NameUse.Official,
-                    Family="default",
+                    Family="Kelly",
                     Given = new List<string>() { "Joe", "Ralph"}
+                }
+            );
+            pat.Name.Add(new HumanName()
+                {
+                    Use = HumanName.NameUse.Maiden,
+                    Family = "Xantua"
+                }
+            );
+
+            pat.Name.Add(new HumanName()
+                {
+                    Use = HumanName.NameUse.Nickname,
+                    Family = "Wibbenhorst",
+                    Given = new List<string>() { "Hans", "Dieter", "Hermann", "Walter"}
                 }
             );
             pat.Identifier.Add(new Identifier()
