@@ -73,23 +73,10 @@ namespace FhirClient.Controllers
                 return BadRequest();
             else
             {
-                Helper.currentId = id;
                 return View(new PatientEditViewmodel(pat));
             }
         }
 
-        [HttpGet]
-        public IActionResult GivenName(int id)
-        {
-            var patient = _repo.GetPatient(Helper.currentId);
-            if (patient is null)
-                return BadRequest();
-            else
-            {
-                var list = patient.Name.ElementAt(id).Given.ToList();
-                return View(list);
-            }
-        }
 
         /// <summary>
         /// Method is called on PatientEdit submit. Updates patient object. Forwards to Result View

@@ -17,6 +17,12 @@ namespace FhirClient.Viewmodels
             _patient = pat;
         }
 
+        public PatientEditViewmodel()
+        {
+            _patient = new Patient();
+        }
+
+
         public string Id { get { return _patient.Id; } }
 
         public bool? Active

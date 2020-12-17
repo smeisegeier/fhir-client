@@ -1,7 +1,7 @@
 ﻿@model FhirClient.Viewmodels.PatientResultViewmodel
 
 <div class="container">
-    <h2>Resultz for @Model.Id</h2>
+    <h2>Results for @Model.Id</h2>
     <h3>Success is @Model.Success</h3>
     <h4>ModelErrors</h4>
     <ol>
@@ -14,7 +14,7 @@
         }
     </ol>
 
-    <h4>Issues</h4>
+    <h4>Validation Issues</h4>
     <ol>
         @if (@Model.ListOfIssues?.Issue is not null && @Model.ListOfIssues.Issue.Any())
         {

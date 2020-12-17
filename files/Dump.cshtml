@@ -26,6 +26,14 @@
     }
 }
 
+@*            @if (Model.Name[i].Given.Count() > 0)
+            {
+                <a asp-action="GivenName" type="submit" asp-route-id="@i" class="btn btn-info">GivenName</a>
+            }
+            else
+            {
+                <button asp-action="GivenName" asp-route-id="@i" class="btn btn-info" disabled>GivenName</button>
+            }*@
 
 
 @*
