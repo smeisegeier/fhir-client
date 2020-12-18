@@ -35,6 +35,17 @@
                 <button asp-action="GivenName" asp-route-id="@i" class="btn btn-info" disabled>GivenName</button>
             }*@
 
+@*
+
+                 @{
+                    int k = 0;
+                    foreach (var item in Model.Name[j].Given)
+                    {
+                      <input id="item" name="Name[@j].Given[@k]" type="text" value="@Model.Name[j].Given.ElementAt(k)" class="form-control col-sm-3">
+                      k++;
+                    }
+                 }
+*@
 
 @*
 <hr /><h4>Name</h4><br />
@@ -62,4 +73,6 @@
 }
 *@
 
+@*                      string myId ="Name_"+@j+"__GivenElement_"+k;
+*@
 

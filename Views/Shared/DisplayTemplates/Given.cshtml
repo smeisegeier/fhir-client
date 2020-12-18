@@ -1,0 +1,9 @@
+﻿@model List<Hl7.Fhir.Model.FhirString>
+@{
+    for (int k = 0; k < Model.Count; k++)
+    {
+        <div class="form-inline">
+            <input name="Model[@k]" type="text" value="@Model[k]" class="form-control col-sm-3">
+        </div>
+    }
+}

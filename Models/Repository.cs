@@ -168,28 +168,22 @@ namespace FhirClient.Models
             pat.Contact = new List<Patient.ContactComponent>();
             pat.Contact.Add(new Patient.ContactComponent());
             pat.Address = new List<Address>();
-            pat.Name = new List<HumanName>();
-            pat.Name.Add(new HumanName() 
-                {   
-                    Use= HumanName.NameUse.Official,
-                    Family="Kelly",
-                    Given = new List<string>() { "Joe", "Ralph"}
-                }
-            );
-            pat.Name.Add(new HumanName()
+            pat.Name = new List<HumanName>()
+            {
+                new HumanName()
                 {
-                    Use = HumanName.NameUse.Maiden,
-                    Family = "Xantua"
-                }
-            );
+                        Use= HumanName.NameUse.Official,
+                        Family = "Arraya",
+                        Given = new string[] { "Xilia", "yen" }
+                },
+                new HumanName()
+                {
+                        Use= HumanName.NameUse.Nickname,
+                        Family = "Liston",
+                        Given = new List<string> { "Fritz", "kolja" }
+                },
+            };
 
-            pat.Name.Add(new HumanName()
-                {
-                    Use = HumanName.NameUse.Nickname,
-                    Family = "Wibbenhorst",
-                    Given = new List<string>() { "Hans", "Dieter", "Hermann", "Walter"}
-                }
-            );
             pat.Identifier.Add(new Identifier()
                 { 
                     Use = Identifier.IdentifierUse.Official,
@@ -201,8 +195,9 @@ namespace FhirClient.Models
                 {
                     Use = Address.AddressUse.Billing,
                     Country = "DE", City="Munich",
-                    PostalCode= "55234"
-                }
+                    PostalCode= "55234",
+                    Line = new string[] { "co", "Etage 4", "Heim"}
+            }
             );
             pat.MaritalStatus = new CodeableConcept()
             {

@@ -21,17 +21,17 @@ namespace FhirClient.Controllers
 {
     public class HomeController : Controller
     {
-        private IWebHostEnvironment webHostEnvironment;
+        private IWebHostEnvironment _webHostEnvironment;
         private Models.IRepository _repo;
 
         /// <summary>
         /// Controller is recreated after every callback into actions?!
         /// </summary>
         /// <param name="webHost"></param>
-        public HomeController(IWebHostEnvironment webHost)
+        public HomeController(IWebHostEnvironment webHost, Models.IRepository repo)
         {
-            webHostEnvironment = webHost;
-            _repo = new Models.Repository();
+            _webHostEnvironment = webHost;
+            _repo = repo;
         }
 
         [HttpGet]
@@ -51,11 +51,6 @@ namespace FhirClient.Controllers
             return View("PatientList", new PatientListViewmodel(_repo.GetPatientsByMe()));
         }
 
-        [HttpGet]
-        public IActionResult ObservationList()
-        {
-            return View(new ObservationListViewmodel(_repo.GetObservations()));
-        }
 
         [HttpGet]
         public IActionResult PatientCreate()
@@ -72,11 +67,18 @@ namespace FhirClient.Controllers
             if (pat is null)
                 return BadRequest();
             else
-            {
+            {                
+                //return View(pat);
                 return View(new PatientEditViewmodel(pat));
             }
         }
 
+        [HttpGet]
+        public string ToJson(string id)
+        {
+            // TODO bad code
+            return _repo.GetJson(_repo.GetPatient(id));
+        }
 
         /// <summary>
         /// Method is called on PatientEdit submit. Updates patient object. Forwards to Result View
@@ -90,10 +92,11 @@ namespace FhirClient.Controllers
         /// <param name="submit">Cancel or Save</param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult PatientEdit(Patient patient, string submit) 
-        //public IActionResult PatientEdit(PatientEditViewmodel patientEditViewmodel, string submit)
+        //public IActionResult PatientEdit(Patient patient, string submit)
+        public IActionResult PatientEdit(PatientEditViewmodel patientEditViewmodel, string submit)
         {
-            //var patient = patientEditViewmodel._patient;
+            var patient = patientEditViewmodel._patient;
+            var lol = patient.Name[0].GivenElement[0];
             bool success=false;
             OperationOutcome outcome = null;
             List<ModelError> list = null;
@@ -129,24 +132,9 @@ namespace FhirClient.Controllers
         {
             _repo.DeletePatient(id);
             return RedirectToAction("PatientList");
-/*            
-            ViewBag.Message = $"Patient {id} was deleted.\n";
-            return View();
-*/
         }
 
-        [HttpGet]
-        public IActionResult ObservationEdit(string id)
-        {
-            return View(new ObservationEditViewmodel(_repo.GetObservation(id)));
-        }
 
-        [HttpGet]
-        public string ToJson(string id)
-        {
-            // TODO bad code
-            return _repo.GetJson(_repo.GetPatient(id));
-        }
 
         /// <summary>
         /// Creates a JSON File from string into files folder
@@ -154,7 +142,7 @@ namespace FhirClient.Controllers
         /// <param name="txt"></param>
         private void createJsonFile(string txt)
         {
-            string uploadDir = Path.Combine(webHostEnvironment.WebRootPath + @"\files");
+            string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath + @"\files");
             string fileName = Guid.NewGuid().ToString() + ".json";
             string filePath = Path.Combine(uploadDir, fileName);
             System.IO.File.WriteAllText(filePath, txt);

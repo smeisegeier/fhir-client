@@ -10,7 +10,35 @@ namespace FhirClient.Viewmodels
     public class PatientEditViewmodel
     {
         // must be visible for controller
-        public Patient _patient { get; private set; }
+        public Patient _patient { get; set; }
+
+        public List<HumanName> TestName
+        //{
+        //    get
+        //    {
+        //        return _patient.Name;
+        //    }
+        //    set
+        //    {
+        //        _patient.Name = value;
+        //    }
+        //}
+        { get; set; } = new List<HumanName>()
+        {
+            new HumanName()
+            {
+                    Use= HumanName.NameUse.Official,
+                    Family = "Arraya",
+                    Given = new string[] { "Xilia", "yen" }
+            },
+            new HumanName()
+            {
+                    Use= HumanName.NameUse.Nickname,
+                    Family = "Liston",
+                    Given = new List<string> { "Fritz", "kolja" }
+            },
+        };
+
 
         public PatientEditViewmodel(Patient pat)
         {
