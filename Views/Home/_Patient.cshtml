@@ -1,8 +1,6 @@
 ﻿@model FhirClient.Viewmodels.PatientEditViewmodel
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-
-
 <div class="form-inline">
     <label asp-for="Id" class="form-control col-sm-2 bg-warning"></label>
     <input asp-for="Id" class="form-control col-sm-6" readonly />
@@ -31,55 +29,29 @@
     <input asp-for="BirthDate" class="form-control col-sm-3" />
 </div>
 
-<hr /><h4>Identifier</h4><br />
+<hr /><h4>Identifier</h4>
 @if (Model.Identifier is not null && Model.Identifier.Any())
 {
     @for (int i=0; i< Model.Identifier.Count(); i++)
     {
-        <div class="form-inline">
-            <label asp-for="Identifier[i].Use" class="form-control col-sm-1 bg-warning"></label>
-            <select asp-for="Identifier[i].Use" class="form-control"
-            asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.Identifier.IdentifierUse>()">
-            </select>
-            <label asp-for="Identifier[i].System" class="form-control col-sm-1 bg-warning"></label>
-            <input asp-for="Identifier[i].System" class="form-control" />
-            <label asp-for="Identifier[i].Value" class="form-control col-sm-1 bg-warning"></label>
-            <input asp-for="Identifier[i].Value" class="form-control" />
-        </div>
-    }
-}
-@*<input type="button" value="Add" onclick="location.href='@Url.Action("Test", "Home")'" />*@
-<hr /><h4>Name</h4><br />
-@if (Model.Name is not null && Model.Name.Any())
-{
-    @for (int j=0; j< Model.Name.Count; j++)
-    {
         <div class="border border-primary pt-3 pb-3 mt-3 mb-3">
-            <div class="form-inline">
-
-                <label asp-for="Name[j].Use" class="form-control col-sm-1 bg-warning"></label>
-                <select asp-for="Name[j].Use" class="form-control"
-                asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.HumanName.NameUse>()">
+            <div class="form-inline" >
+                <label asp-for="Identifier[i].Use" class="form-control col-sm-1 bg-warning"></label>
+                <select asp-for="Identifier[i].Use" class="form-control"
+                asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.Identifier.IdentifierUse>()">
                 </select>
-                <label asp-for="Name[j].Text" class="form-control col-sm-1 bg-warning"></label>
-                <input asp-for="Name[j].Text" class="form-control col-sm-3" readonly/>
-
-                <label asp-for="Name[j].Family" class="form-control col-sm-1 bg-warning"></label>
-                <input asp-for="Name[j].Family" class="form-control col-sm-3" />
-                <br />
-                 @{ 
-                    for (int k = 0; k < Model.Name[j].Given.Count(); k++)
-                    {
-
-                      <input name="Name[@j].GivenElement[@k].Value" type="text" value="@Model.Name[@j].GivenElement[@k].Value" class="form-control col-sm-3">
-                    }
-                 }
+                <label asp-for="Identifier[i].System" class="form-control col-sm-1 bg-warning"></label>
+                <input asp-for="Identifier[i].System" class="form-control" />
+                <label asp-for="Identifier[i].Value" class="form-control col-sm-1 bg-warning"></label>
+                <input asp-for="Identifier[i].Value" class="form-control" />
+                @Html.DisplayFor(x => x.Identifier[i].Type, "CodeableConcept")
             </div>
         </div>
     }
 }
 
-
+<hr /><h4>Name</h4>
+@Html.DisplayFor(x => x.Name, "Name")
 
 
 <hr /><h4>Address</h4><br />

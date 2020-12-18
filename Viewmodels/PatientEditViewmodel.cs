@@ -9,47 +9,12 @@ namespace FhirClient.Viewmodels
 {
     public class PatientEditViewmodel
     {
-        // must be visible for controller
         public Patient _patient { get; set; }
-
-        public List<HumanName> TestName
-        //{
-        //    get
-        //    {
-        //        return _patient.Name;
-        //    }
-        //    set
-        //    {
-        //        _patient.Name = value;
-        //    }
-        //}
-        { get; set; } = new List<HumanName>()
-        {
-            new HumanName()
-            {
-                    Use= HumanName.NameUse.Official,
-                    Family = "Arraya",
-                    Given = new string[] { "Xilia", "yen" }
-            },
-            new HumanName()
-            {
-                    Use= HumanName.NameUse.Nickname,
-                    Family = "Liston",
-                    Given = new List<string> { "Fritz", "kolja" }
-            },
-        };
-
 
         public PatientEditViewmodel(Patient pat)
         {
             _patient = pat;
         }
-
-        public PatientEditViewmodel()
-        {
-            _patient = new Patient();
-        }
-
 
         public string Id { get { return _patient.Id; } }
 
@@ -90,12 +55,12 @@ namespace FhirClient.Viewmodels
         }
 
         [DataType(System.ComponentModel.DataAnnotations.DataType.Date)]
-        public DateTime? BirthDate 
-        { 
-            get 
-            { 
-                return Helper.IsoToDateTime(_patient.BirthDate); 
-            } 
+        public DateTime? BirthDate
+        {
+            get
+            {
+                return Helper.IsoToDateTime(_patient.BirthDate);
+            }
             set
             {
                 _patient.BirthDate = value.ToString();
@@ -103,7 +68,7 @@ namespace FhirClient.Viewmodels
         }
 
 
-        // TODO Given names still wont save
+
         public List<HumanName> Name 
         { 
             get 

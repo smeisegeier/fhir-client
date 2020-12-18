@@ -23,7 +23,7 @@ namespace FhirClient.Controllers
             _repo = repo;
         }
 
-        public IActionResult Index()
+        public IActionResult Index() 
         {
             return View();
         }

@@ -1,78 +1,34 @@
-﻿<hr /><h4>Name</h4><br />
-@if (Model.Name is not null && Model.Name.Any())
-{
-    @for (int i=0; i< Model.Name.Count(); i++)
-    {
-        <div class="form-inline">
-            <label asp-for="Name[i].Use" class="form-control col-sm-1 bg-warning"></label>
-            <select asp-for="Name[i].Use" class="form-control"
-            asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.HumanName.NameUse>()">
-            </select>
-            <label asp-for="Name[i].Text" class="form-control col-sm-1 bg-warning"></label>
-            <input asp-for="Name[i].Text" class="form-control col-sm-3" readonly/>
-            <label asp-for="Name[i].Family" class="form-control col-sm-1 bg-warning"></label>
-            <input asp-for="Name[i].Family" class="form-control col-sm-3" />
-        </div>
-        <div class="form-inline">
-            <label asp-for="Name[i].Given" class="form-control col-sm-1 bg-warning"></label>
-            @{string s="";}
-            @for (int j=0;j < Model.Name[i].Given.Count(); j++)
-            {
-                s+=@Model.Name[i].Given.ElementAt(j) + " ";
-                <!--<input asp-for="Name[i].Given.ElementAt(j)" class="form-control col-sm-2" />-->
-            }
-            <label class="form-control col-sm-3">@s</label>
-        </div>
-    }
-}
+﻿@*
 
-@*            @if (Model.Name[i].Given.Count() > 0)
-            {
-                <a asp-action="GivenName" type="submit" asp-route-id="@i" class="btn btn-info">GivenName</a>
-            }
-            else
-            {
-                <button asp-action="GivenName" asp-route-id="@i" class="btn btn-info" disabled>GivenName</button>
-            }*@
+THIS WORKS OUT
 
-@*
-
-                 @{
-                    int k = 0;
-                    foreach (var item in Model.Name[j].Given)
-                    {
-                      <input id="item" name="Name[@j].Given[@k]" type="text" value="@Model.Name[j].Given.ElementAt(k)" class="form-control col-sm-3">
-                      k++;
-                    }
-                 }
-*@
-
-@*
 <hr /><h4>Name</h4><br />
 @if (Model.Name is not null && Model.Name.Any())
 {
-    @for (int j = 0; j < Model.Name.Count(); j++)
+    @for (int j=0; j< Model.Name.Count; j++)
     {
-        <div class="form-inline">
-            @Html.LabelFor(i => Model.Name[j].Use, new {@class="form-control col-sm-1 bg-warning"})
-            @Html.DropDownListFor(i => Model.Name[j].Use, @Html.GetEnumSelectList<Hl7.Fhir.Model.HumanName.NameUse>(), new {@class="form-control col-sm-2"})
-            @Html.LabelFor(i => Model.Name[j].Text, new {@class="form-control col-sm-1 bg-warning"})
-            @Html.TextBoxFor(i => Model.Name[j].Text, new { disabled = "disabled", @readonly = "readonly", style = "width:12em;" })
-            @Html.LabelFor(i => Model.Name[j].Family, new {@class="form-control col-sm-1 bg-warning"})
-            @Html.TextBoxFor(i => Model.Name[j].Family, new {@class="form-control col-sm-3"})
+        <div class="border border-primary pt-3 pb-3 mt-3 mb-3">
+            <div class="form-inline">
+
+                <label asp-for="Name[j].Use" class="form-control col-sm-1 bg-warning"></label>
+                <select asp-for="Name[j].Use" class="form-control"
+                asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.HumanName.NameUse>()">
+                </select>
+                <label asp-for="Name[j].Text" class="form-control col-sm-1 bg-warning"></label>
+                <input asp-for="Name[j].Text" class="form-control col-sm-3" readonly/>
+
+                <label asp-for="Name[j].Family" class="form-control col-sm-1 bg-warning"></label>
+                <input asp-for="Name[j].Family" class="form-control col-sm-3" />
+                <br />
+                 @{ 
+                    for (int k = 0; k < Model.Name[j].Given.Count(); k++)
+                    {
+                      <input name="Name[@j].GivenElement[@k].Value" type="text" value="@Model.Name[@j].GivenElement[@k].Value" class="form-control col-sm-3">
+                    }
+                 }
+            </div>
         </div>
-         <div class="form-inline">
-            @Html.LabelFor(i => Model.Name[j].Given, new {@class="form-control col-sm-1 bg-warning"})
-            @for (int k = 0; k < Model.Name[j].Given.Count(); k++)
-            {
-                @Html.TextBoxFor(i => Model.Name[j].Given.ElementAt(k), new {@class="form-control col-sm-2"})
-            }
-        </div>
-        
     }
 }
-*@
-
-@*                      string myId ="Name_"+@j+"__GivenElement_"+k;
 *@
 

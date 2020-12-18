@@ -22,7 +22,7 @@ namespace FhirClient.Controllers
     public class HomeController : Controller
     {
         private IWebHostEnvironment _webHostEnvironment;
-        private Models.IRepository _repo;
+        private readonly Models.IRepository _repo;
 
         /// <summary>
         /// Controller is recreated after every callback into actions?!
@@ -55,9 +55,9 @@ namespace FhirClient.Controllers
         [HttpGet]
         public IActionResult PatientCreate()
         {
-            _repo.CreatePatient();
-            return RedirectToAction("PatientList");
-            //return View("PatientEdit",new PatientEditViewmodel(_repo.CreatePatient()));
+            //var pat = _repo.CreatePatient();
+            //return RedirectToAction("PatientList");
+            return View("PatientEdit",new PatientEditViewmodel(_repo.CreatePatient()));
         }
 
         [HttpGet]
@@ -68,7 +68,6 @@ namespace FhirClient.Controllers
                 return BadRequest();
             else
             {                
-                //return View(pat);
                 return View(new PatientEditViewmodel(pat));
             }
         }
@@ -92,11 +91,11 @@ namespace FhirClient.Controllers
         /// <param name="submit">Cancel or Save</param>
         /// <returns></returns>
         [HttpPost]
-        //public IActionResult PatientEdit(Patient patient, string submit)
-        public IActionResult PatientEdit(PatientEditViewmodel patientEditViewmodel, string submit)
+        public IActionResult PatientEdit(Patient patient, string submit)
+        //public IActionResult PatientEdit(PatientEditViewmodel patientEditViewmodel, string submit)
+        // w/o parameterless ctor, there is no proper viewmodel on submit. Why? 
+        // -> That's normal. The default model binder can no longer instantiate your view model as it doesn't have a parameterless constructor. 
         {
-            var patient = patientEditViewmodel._patient;
-            var lol = patient.Name[0].GivenElement[0];
             bool success=false;
             OperationOutcome outcome = null;
             List<ModelError> list = null;

@@ -1,0 +1,12 @@
+﻿@model List<Hl7.Fhir.Model.FhirString>
+@{
+    @if (Model is not null && Model.Any())
+    {
+        var prefix = ViewData.TemplateInfo.HtmlFieldPrefix;
+        for (int k = 0; k < Model.Count; k++)
+        {
+            string myName = $"{@prefix}[{@k}].Value";
+            <input name="@myName" type="text" value="@Model[k].Value" class="form-control col-sm-3">
+        }
+    }
+}

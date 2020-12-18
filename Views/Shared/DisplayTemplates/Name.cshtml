@@ -1,17 +1,21 @@
 ﻿@model List<Hl7.Fhir.Model.HumanName>
-
 @{
-    for (int j = 0; j < Model.Count(); j++)
+    @if (Model is not null && Model.Any())
     {
-        <div class="form-inline">
-            <label asp-for="@Model[j].Use" class="form-control col-sm-1 bg-warning"></label>
-            <select asp-for="@Model[j].Use" class="form-control" asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.HumanName.NameUse>()"></select>
-            <label asp-for="@Model[j].Text" class="form-control col-sm-1 bg-warning"></label>
-            <input asp-for="@Model[j].Text" class="form-control col-sm-3" readonly/>
-            <label asp-for="@Model[j].Family" class="form-control col-sm-1 bg-warning"></label>
-            <input asp-for="@Model[j].Family" class="form-control col-sm-3" />
-            @Html.DisplayFor(x=>Model[j].Given.ToList(), "Given")
-        </div>
+        for (int j = 0; j < Model.Count(); j++)
+        {
+            <div class="border border-primary pt-3 pb-3 mt-3 mb-3">
+                <div class="form-inline">
+                    <label asp-for="@Model[j].Use" class="form-control col-sm-1 bg-warning"></label>
+                    <select asp-for="@Model[j].Use" class="form-control" asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.HumanName.NameUse>()"></select>
+                    <label asp-for="@Model[j].Text" class="form-control col-sm-1 bg-warning"></label>
+                    <input asp-for="@Model[j].Text" class="form-control col-sm-3" readonly/>
+                    <label asp-for="@Model[j].Family" class="form-control col-sm-1 bg-warning"></label>
+                    <input asp-for="@Model[j].Family" class="form-control col-sm-3" />
+                    @Html.DisplayFor(x=>Model[j].GivenElement, "NameGiven")
+                </div>
+            </div>
+        }
     }
 }
 

@@ -144,15 +144,12 @@ namespace FhirClient.Models
             // adopt text field
             foreach (HumanName item in pat.Name)
             {
-                if (string.IsNullOrEmpty(item.Text))
+                string g = "";
+                foreach (string given in item.Given)
                 {
-                    string g = "";
-                    foreach (string given in item.Given)
-                    {
-                        g += given + " ";
-                    }
-                    item.Text = g + item.Family;
+                    g += given + " ";
                 }
+                item.Text = g + item.Family;
             }
             return pat;
         }
@@ -188,7 +185,20 @@ namespace FhirClient.Models
                 { 
                     Use = Identifier.IdentifierUse.Official,
                     System = "http://example.org", 
-                    Value = "0815" 
+                    Value = "0815", 
+                    Type = new CodeableConcept() 
+                    {
+                        Text = "Nice conecpt",
+                        Coding = new List<Coding>()
+                        {
+                            new Coding()
+                            {
+                                System = "http://example.com/resource?foo=bar#fragment",
+                                Code = "Syntax by sys",
+                                Display = "Funky coding stuff"
+                            }
+                        }
+                    }
                 }
             );
             pat.Address.Add(new Address()
