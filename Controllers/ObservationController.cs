@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace FhirClient.Controllers
 {
+    // TODO no vm? 
     public class ObservationController : Controller
     {
         private IWebHostEnvironment _webHostEnvironment;

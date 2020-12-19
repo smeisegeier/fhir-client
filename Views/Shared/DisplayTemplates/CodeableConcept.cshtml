@@ -7,19 +7,22 @@
             var prefix = ViewData.TemplateInfo.HtmlFieldPrefix;
             string myName1 = $"{@prefix}.Text";
             <label class="form-control col-sm-1 bg-warning">Text</label>
-            <input name="@myName1" type="text" value="@Model.Text" class="form-control col-sm-3">
-            for (int k = 0; k < Model.Coding.Count; k++)
-            {
-                <label class="form-control col-sm-1 bg-warning">System</label>
-                string myName2 = $"{@prefix}[{@k}].System";
-                <input name="@myName2" type="text" value="@Model.Coding[k].System" class="form-control col-sm-3">
-                <label class="form-control col-sm-1 bg-warning">Code</label>
-                string myName3 = $"{@prefix}[{@k}].Code";
-                <input name="@myName3" type="text" value="@Model.Coding[k].Code" class="form-control col-sm-3">
-                <label class="form-control col-sm-1 bg-warning">Display</label>
-                string myName4 = $"{@prefix}[{@k}].Display";
-                <input name="@myName4" type="text" value="@Model.Coding[k].Display" class="form-control col-sm-3">
-            }
+            <input name="@myName1" type="text" value="@Model.Text" class="form-control col-sm-2">
+            <br/>
+            @:<div class="form-inline">
+                for (int k = 0; k < Model.Coding.Count; k++)
+                {
+                    <label class="form-control col-sm-1 bg-warning">System</label>
+                    string myName2 = $"{@prefix}.Coding[{@k}].System";
+                    <input name="@myName2" type="text" value="@Model.Coding[k].System" class="form-control col-sm-3">
+                    <label class="form-control col-sm-1 bg-warning">Code</label>
+                    string myName3 = $"{@prefix}.Coding[{@k}].Code";
+                    <input name="@myName3" type="text" value="@Model.Coding[k].Code" class="form-control col-sm-2">
+                    <label class="form-control col-sm-1 bg-warning">Display</label>
+                    string myName4 = $"{@prefix}.Coding[{@k}].Display";
+                    <input name="@myName4" type="text" value="@Model.Coding[k].Display" class="form-control col-sm-3">
+                }
+            @:</div>
         }
     }
 </div>

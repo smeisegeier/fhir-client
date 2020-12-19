@@ -1,9 +1,17 @@
 ﻿@model FhirClient.Viewmodels.PatientResultViewmodel
-
+@{ 
+    int? errors = (@Model.ListOfModelErrors == null) ? 0 : @Model.ListOfModelErrors?.Count;
+    int? warnings = (@Model.ListOfIssues.Issue == null) ? 0 : @Model.ListOfIssues.Issue?.Count;
+}
 <div class="container">
     <h2>Results for @Model.Id</h2>
     <h3>Success is @Model.Success</h3>
-    <h4>ModelErrors</h4>
+    <h5>ModelErrors
+        <span class="badge badge-danger">Errors
+            <span class="badge badge-light">@errors</span>
+            <span class="sr-only">errors</span>
+        </span>
+    </h5>
     <ol>
         @if (@Model.ListOfModelErrors is not null && @Model.ListOfModelErrors.Any())
         {
@@ -14,8 +22,14 @@
         }
     </ol>
 
-    <h4>Validation Issues</h4>
+    <h5>Validation Issues
+        <span class="badge badge-warning">Warnings
+            <span class="badge badge-light">@warnings</span>
+            <span class="sr-only">warnings</span>
+        </span>
+    </h5>
     <ol>
+        <div class="alert alert-warning" role="alert">
         @if (@Model.ListOfIssues?.Issue is not null && @Model.ListOfIssues.Issue.Any())
         {
             @foreach (var issue in @Model.ListOfIssues.Issue)
@@ -23,6 +37,7 @@
                 <li>@issue.Details.Text</li>
             }
         }
+        </div>
     </ol>
     <a asp-action="PatientEdit" asp-route-id="@Model.Id" class="btn btn-info">Back to Patient</a>
     <a asp-action="PatientList" class="btn btn-info">Back to List</a>

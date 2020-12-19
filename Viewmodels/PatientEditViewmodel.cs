@@ -9,7 +9,7 @@ namespace FhirClient.Viewmodels
 {
     public class PatientEditViewmodel
     {
-        public Patient _patient { get; set; }
+        public Patient _patient { get; private set; }
 
         public PatientEditViewmodel(Patient pat)
         {
@@ -18,11 +18,26 @@ namespace FhirClient.Viewmodels
 
         public string Id { get { return _patient.Id; } }
 
-        public bool? Active
+        //public bool? Active
+        //{
+        //    get
+        //    { 
+        //        return _patient.Active; 
+        //    }
+        //    set
+        //    {
+        //        _patient.Active = value;
+        //    }
+        //}
+
+        public bool Active
         {
             get
-            { 
-                return _patient.Active; 
+            {
+                if (_patient.Active == null || _patient.Active == true )
+                    return true;
+                else
+                    return false;
             }
             set
             {
@@ -177,5 +192,7 @@ namespace FhirClient.Viewmodels
                 _patient.GeneralPractitioner = value;
             }
         }
+
+        public string lastUpdated { get => _patient.Meta.LastUpdated.ToString(); }
     }
 }

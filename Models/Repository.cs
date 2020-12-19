@@ -14,6 +14,12 @@ namespace FhirClient.Models
         public List<Patient> GetPatientsByMe();
         public Patient UpdatePatient(Patient patient);
         public Patient CreatePatient();
+        public Patient GetPatient(string id);
+        public string GetPatientAsJson(Patient pat);
+        public string GetPatientAsJson(string id);
+        public string GetPatientAsXml(Patient pat);
+        public string GetPatientAsXml(string id);
+
 
         /// <summary>
         /// Deletes Patient.
@@ -25,8 +31,6 @@ namespace FhirClient.Models
         public List<Observation> GetObservations();
         public Observation GetObservation(string id);
 
-        public Patient GetPatient(string id);
-        public string GetJson(Resource res);
     }
 
 
@@ -44,7 +48,6 @@ namespace FhirClient.Models
             return getAllResources(new List<Patient>(),100).FindAll(i => i.Meta.Source == "dexterDSD");
         }
 
-
         public List<Observation> GetObservations() => getAllResources(new List<Observation>(), 20);
 
         public List<Organization> GetOrganizations() => getAllResources(new List<Organization>(), 20);
@@ -56,6 +59,10 @@ namespace FhirClient.Models
 
         public Patient GetPatient(string id) => getResourceById(id, typeof(Patient)) as Patient;
 
+        public string GetPatientAsJson(Patient pat) => getJson(pat);
+        public string GetPatientAsJson(string id) => GetPatientAsJson(GetPatient(id));
+        public string GetPatientAsXml(Patient pat) => getXml(pat);
+        public string GetPatientAsXml(string id) => GetPatientAsXml(GetPatient(id));
 
         public bool DeletePatient(string id) => deleteResource(GetPatient(id));
 
@@ -283,11 +290,10 @@ namespace FhirClient.Models
         }
 
 
-        public string GetJson(Resource res)
-        {
-            var xd = new Hl7.Fhir.Serialization.FhirJsonSerializer();
-            return xd.SerializeToString(res);
-        }
+        private string getJson(Resource resource) => new FhirJsonSerializer().SerializeToString(resource);
+        
+        private string getXml(Resource resource) => new FhirXmlSerializer().SerializeToString(resource);
+
 
         //public string GetJsonPatient(Patient pat)
         //{

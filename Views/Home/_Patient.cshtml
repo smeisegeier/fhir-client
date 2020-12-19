@@ -1,18 +1,24 @@
 ﻿@model FhirClient.Viewmodels.PatientEditViewmodel
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-<div class="form-inline">
-    <label asp-for="Id" class="form-control col-sm-2 bg-warning"></label>
-    <input asp-for="Id" class="form-control col-sm-6" readonly />
+<div class="border-3">
+    <div class="form-inline">
+        <label asp-for="Id" class="form-control col-sm-2 bg-warning"></label>
+        <input asp-for="Id" class="form-control col-sm-4" readonly />
+        <input asp-for="lastUpdated" class="form-control col-sm-2" readonly />
+    </div>
 </div>
 <br />
-<div class="form-inline">
-    <label asp-for="Active" class="form-control col-sm-2 bg-warning"></label>
-    <!-- bool? as datatype is special. options cannot be retrieved from enum or class -->
-    <select asp-for="Active" class="form-control">
-        <option>true</option>
-        <option>false</option>
-    </select>
+    <div class="form-inline">
+        <label asp-for="Active" class="form-control col-sm-2 bg-warning"></label>
+        <!-- bool? as datatype is special. options cannot be retrieved from enum or class 
+        <select asp-for="Active" class="form-control">
+            <option>true</option>
+            <option>false</option>
+        </select>
+        -->
+        <!--insert no break spaces to shove checkbox to the right-->
+        <span>&nbsp;&nbsp;&nbsp;</span>
+        <input asp-for="Active" class="form-control"/>
 </div>
 <br />
 <div class="form-inline">
@@ -44,8 +50,8 @@
                 <input asp-for="Identifier[i].System" class="form-control" />
                 <label asp-for="Identifier[i].Value" class="form-control col-sm-1 bg-warning"></label>
                 <input asp-for="Identifier[i].Value" class="form-control" />
-                @Html.DisplayFor(x => x.Identifier[i].Type, "CodeableConcept")
             </div>
+            @Html.DisplayFor(x => x.Identifier[i].Type, "CodeableConcept")
         </div>
     }
 }
@@ -77,10 +83,14 @@
 }
 
 <hr /><h4>Marital Status</h4><br />
+@*
 <div class="form-inline">
     <label asp-for="MaritalStatus.Text" class="form-control col-sm-1 bg-warning"></label>
     <input asp-for="MaritalStatus.Text" class="form-control col-sm-3" />
 </div>
+
+*@@Html.DisplayFor(x => x.MaritalStatus, "CodeableConcept")
+@*
 @if (Model.MaritalStatus is not null && Model.MaritalStatus.Coding.Any())
 {
     @for (int i=0; i < Model.MaritalStatus.Coding.Count(); i++) 
@@ -95,6 +105,7 @@
         </div>
     }
 }
+*@
 @*
 <hr /><h4>Deceased</h4><br />
 <div class="form-inline">

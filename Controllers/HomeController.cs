@@ -17,7 +17,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace FhirClient.Controllers
+namespace FhirClient.Controllers 
 {
     public class HomeController : Controller
     {
@@ -73,11 +73,10 @@ namespace FhirClient.Controllers
         }
 
         [HttpGet]
-        public string ToJson(string id)
-        {
-            // TODO bad code
-            return _repo.GetJson(_repo.GetPatient(id));
-        }
+        public string ToJson(string id) => _repo.GetPatientAsJson(id);
+
+        [HttpGet]
+        public string ToXml(string id) => _repo.GetPatientAsXml(id);
 
         /// <summary>
         /// Method is called on PatientEdit submit. Updates patient object. Forwards to Result View
