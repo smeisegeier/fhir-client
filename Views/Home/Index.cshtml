@@ -1,9 +1,9 @@
 ﻿
 <div class="container">
     <br /><h1>Main menu</h1><br />
-    <a class="btn btn-primary btn-lg" asp-action="PatientList">List Patients</a>
-    <a class="btn btn-primary btn-lg" asp-action="PatientListByMe">My Patients</a>
-    <a class="btn btn-primary btn-lg" asp-action="PatientCreate">Create Patients</a>
+    <a class="btn btn-primary btn-lg" asp-controller="Patient" asp-action="Grid">List Patients</a>
+    <a class="btn btn-primary btn-lg" asp-controller="Patient" asp-action="GridFromMe">My Patients</a>
+    <a class="btn btn-primary btn-lg" asp-controller="Patient" asp-action="Create">Create Patients</a>
     <hr />
     <a class="btn btn-info btn-lg" asp-controller="Observation" asp-action="ObservationList">List Observations</a>
     <hr />

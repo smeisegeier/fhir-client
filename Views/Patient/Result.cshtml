@@ -39,6 +39,6 @@
         }
         </div>
     </ol>
-    <a asp-action="PatientEdit" asp-route-id="@Model.Id" class="btn btn-info">Back to Patient</a>
-    <a asp-action="PatientList" class="btn btn-info">Back to List</a>
+    <a asp-controller="Patient" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info">Back to Patient</a>
+    <a asp-controller="Patient" asp-action="Grid" class="btn btn-info">Back to List</a>
 </div>
