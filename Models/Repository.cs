@@ -1,9 +1,11 @@
 ﻿using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Serialization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace FhirClient.Models
@@ -20,7 +22,6 @@ namespace FhirClient.Models
         public string GetPatientAsXml(Patient pat);
         public string GetPatientAsXml(string id);
 
-
         /// <summary>
         /// Deletes Patient.
         /// </summary>
@@ -31,42 +32,81 @@ namespace FhirClient.Models
         public List<Observation> GetObservations();
         public Observation GetObservation(string id);
 
+        public ValueSet GetValueSet(string valueSetUrl);
+        public CodeSystem GetCodeSystem(string codeSystemUrl); 
+
     }
 
 
     public class Repository : IRepository
     {
-        private readonly string _baseUrl = "https://vonk.fire.ly/R4";
+        //private const string _onto = "https://r4.ontoserver.csiro.au/fhir";
+        //private const string _tx = "http://tx.fhir.org/r4";
+        //private const string _snowVs = "http://snomed.info/sct?fhir_vs=refset/1072351000168102";
+        //private const string _isoVs = "urn:iso:std:iso:3166";
 
-        public Repository() { }
 
-        public List<Patient> GetPatients() => getAllResources(new List<Patient>(),20);
+        private const string _baseUrl = "https://vonk.fire.ly/R4"; 
+        private const string _onto3 = "https://ontoserver.csiro.au/stu3-latest";
+
+
+        public Repository()
+        {
+            initApplication();
+        }
+
+        /*   PATIENT   */
+        public List<Patient> GetPatients() => getResources(new List<Patient>(),20);
 
         public List<Patient> GetPatientsByMe()
         {
             // you may want to create searchparams..
-            return getAllResources(new List<Patient>(),100).FindAll(i => i.Meta.Source == "dexterDSD");
+            return getResources(new List<Patient>(),100).FindAll(i => i.Meta.Source == "dexterDSD");
         }
 
-        public List<Observation> GetObservations() => getAllResources(new List<Observation>(), 20);
-
-        public List<Organization> GetOrganizations() => getAllResources(new List<Organization>(), 20);
-
-
         public Patient UpdatePatient(Patient patient) => updateResource(cleansePatient(patient)) as Patient;
-
         public Patient CreatePatient() => createResource(initEmptyPatient()) as Patient;
-
         public Patient GetPatient(string id) => getResourceById(id, typeof(Patient)) as Patient;
-
-        public string GetPatientAsJson(Patient pat) => getJson(pat);
+        public string GetPatientAsJson(Patient pat) => resourceToJson(pat);
         public string GetPatientAsJson(string id) => GetPatientAsJson(GetPatient(id));
-        public string GetPatientAsXml(Patient pat) => getXml(pat);
+        public string GetPatientAsXml(Patient pat) => resourceToXml(pat);
         public string GetPatientAsXml(string id) => GetPatientAsXml(GetPatient(id));
-
         public bool DeletePatient(string id) => deleteResource(GetPatient(id));
 
+        /*   OBSERVATION   */
+
+        public List<Observation> GetObservations() => getResources(new List<Observation>(), 20);
         public Observation GetObservation(string id) => getResourceById(id, typeof(Observation)) as Observation;
+
+        /*   ORGANIZATION   */
+        public List<Organization> GetOrganizations() => getResources(new List<Organization>(), 20);
+
+        /*   TERMINOLOGY   */
+        public ValueSet GetValueSet(string valueSetUrl) => jsonToBase(Helper.GetStringFromUrl(valueSetUrl)) as ValueSet;
+        public CodeSystem GetCodeSystem(string codeSystemUrl) => jsonToBase(Helper.GetStringFromUrl(codeSystemUrl)) as CodeSystem;
+
+
+        /*    private     */
+
+        /// <summary>
+        /// OneTime (static) setups
+        /// </summary>
+        private void initApplication()
+        {
+            // load static codesystems
+            // patient-contactrelationship
+            var cs = GetCodeSystem("https://hl7.org/FHIR/v2/0131/v2-0131.cs.canonical.json");
+            Viewmodels.PatientEditViewmodel.CodeDropdownForContact = new SelectList(cs.Concept.ToList(), "Code", "Display");
+
+            // TEST AREA - get ValueSets
+            //var list = getResources(new List<ValueSet>(), 50, null, _baseUrl);
+            //using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
+            //{
+            //    // still unclear WHERE the vs is :o
+            //    var res = client.ExpandValueSet(new FhirUri("https://hl7.org/FHIR/valueset-patient-contactrelationship.canonical.json"));
+            //}
+
+        }
 
 
         /// <summary>
@@ -237,6 +277,10 @@ namespace FhirClient.Models
         }
 
 
+        private string resourceToJson(Resource resource) => new FhirJsonSerializer().SerializeToString(resource);
+        private Base jsonToBase(string json) => new FhirJsonParser().Parse(json);
+        private string resourceToXml(Resource resource) => new FhirXmlSerializer().SerializeToString(resource);
+
 
 
         private Resource getResourceFromJson(string json)
@@ -261,9 +305,9 @@ namespace FhirClient.Models
         /// <param name="list">list to be filled</param>
         /// <param name="maxEntries"># of entries to be fetched</param>
         /// <returns></returns>
-        private List<T> getAllResources<T>(List<T> list, int maxEntries, SearchParams q=null) where T : Resource
+        private List<T> getResources<T>(List<T> list, int maxEntries, SearchParams q=null, string fhirUrl=_baseUrl) where T : Resource
         {
-            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
+            using (var client = new Hl7.Fhir.Rest.FhirClient(fhirUrl))
             {
                 if (q is null)
                 {
@@ -290,32 +334,6 @@ namespace FhirClient.Models
         }
 
 
-        private string getJson(Resource resource) => new FhirJsonSerializer().SerializeToString(resource);
-        
-        private string getXml(Resource resource) => new FhirXmlSerializer().SerializeToString(resource);
 
-
-        //public string GetJsonPatient(Patient pat)
-        //{
-        //    var xd = new Hl7.Fhir.Serialization.FhirJsonSerializer();
-        //    return xd.SerializeToString(pat);
-        //}
-
-
-        //public Patient GetPatientById(string id)
-        //{
-        //    using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
-        //    {
-        //        try
-        //        {
-        //            return improvePatient(client.Read<Patient>("Patient/" + id));
-        //        }
-        //        catch (FhirOperationException)
-        //        {
-        //            return null;
-        //            //return Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound.ToString();
-        //        }
-        //    }
-        //}
     }
 }

@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace FhirClient.Controllers
 {
-    // TODO no vm? 
     public class ObservationController : Controller
     {
         private IWebHostEnvironment _webHostEnvironment;
@@ -36,7 +35,7 @@ namespace FhirClient.Controllers
         }
 
         [HttpGet]
-        public IActionResult ObservationList()
+        public IActionResult Grid()
         {
             return View(new ObservationListViewmodel(_repo.GetObservations()));
         }

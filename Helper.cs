@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace FhirClient
@@ -24,5 +25,12 @@ namespace FhirClient
             return DateTime.Parse(date, null, System.Globalization.DateTimeStyles.RoundtripKind);
         }
 
+        public static string GetStringFromUrl(string url)
+        {
+            using (WebClient webClient = new WebClient())
+            {
+                return webClient.DownloadString(url);
+            }
+        }
     }
 }

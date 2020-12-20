@@ -1,6 +1,8 @@
 ﻿using Hl7.Fhir.Model;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,24 +13,16 @@ namespace FhirClient.Viewmodels
     {
         public Patient _patient { get; private set; }
 
+        public static SelectList CodeDropdownForContact { get; set; }
+
+        // no parameterless ctor, hence on POST only the Model will be obtained
         public PatientEditViewmodel(Patient pat)
         {
             _patient = pat;
         }
 
-        public string Id { get { return _patient.Id; } }
 
-        //public bool? Active
-        //{
-        //    get
-        //    { 
-        //        return _patient.Active; 
-        //    }
-        //    set
-        //    {
-        //        _patient.Active = value;
-        //    }
-        //}
+        public string Id { get { return _patient.Id; } }
 
         public bool Active
         {

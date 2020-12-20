@@ -1,7 +1,7 @@
 ﻿@model FhirClient.Viewmodels.PatientResultViewmodel
 @{ 
     int? errors = (@Model.ListOfModelErrors == null) ? 0 : @Model.ListOfModelErrors?.Count;
-    int? warnings = (@Model.ListOfIssues.Issue == null) ? 0 : @Model.ListOfIssues.Issue?.Count;
+    int? warnings = (@Model.ListOfIssues?.Issue == null) ? 0 : @Model.ListOfIssues.Issue?.Count;
 }
 <div class="container">
     <h2>Results for @Model.Id</h2>

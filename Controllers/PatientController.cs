@@ -16,7 +16,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FhirClient.Controllers
 {
@@ -63,6 +63,7 @@ namespace FhirClient.Controllers
                 return View(new PatientEditViewmodel(pat));
             }
         }
+
 
         [HttpGet]
         public string ToJson(string id) => _repo.GetPatientAsJson(id);

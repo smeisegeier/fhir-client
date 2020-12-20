@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Views\Shared\EditorTemplates\" />
     <Folder Include="wwwroot\files\" />
   </ItemGroup>
 
