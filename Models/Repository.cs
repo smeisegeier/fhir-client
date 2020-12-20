@@ -26,8 +26,8 @@ namespace FhirClient.Models
         /// Deletes Patient.
         /// </summary>
         /// <param name="id">patient object</param>
-        /// <returns>success as bool</returns>
-        public bool DeletePatient(string id);
+        /// <returns>null as success</returns>
+        public Resource DeletePatient(string id);
 
         public List<Observation> GetObservations();
         public Observation GetObservation(string id);
@@ -64,14 +64,14 @@ namespace FhirClient.Models
             return getResources(new List<Patient>(),100).FindAll(i => i.Meta.Source == "dexterDSD");
         }
 
-        public Patient UpdatePatient(Patient patient) => updateResource(cleansePatient(patient)) as Patient;
-        public Patient CreatePatient() => createResource(initEmptyPatient()) as Patient;
+        public Patient UpdatePatient(Patient patient) => processResource(cleansePatient(patient), "update") as Patient;
+        public Patient CreatePatient() => processResource(initEmptyPatient(), "create") as Patient;
         public Patient GetPatient(string id) => getResourceById(id, typeof(Patient)) as Patient;
         public string GetPatientAsJson(Patient pat) => resourceToJson(pat);
         public string GetPatientAsJson(string id) => GetPatientAsJson(GetPatient(id));
         public string GetPatientAsXml(Patient pat) => resourceToXml(pat);
         public string GetPatientAsXml(string id) => GetPatientAsXml(GetPatient(id));
-        public bool DeletePatient(string id) => deleteResource(GetPatient(id));
+        public Resource DeletePatient(string id) => processResource(GetPatient(id), "delete");
 
         /*   OBSERVATION   */
 
@@ -122,8 +122,6 @@ namespace FhirClient.Models
                 try
                 {
                     var res = client.Read<Resource>($"{type.Name}/" + id);
-                    //if (res is Patient)
-                    //    res = improvePatient((Patient)res);
                     return res;
                 }
                 catch (FhirOperationException)
@@ -134,32 +132,24 @@ namespace FhirClient.Models
             }
         }
 
-        // TODO delegates?
-        private bool deleteResource(Resource resourceToBeDeleted)
+        private Resource processResource(Resource resourceToBeprocessed, string operation, string url=_baseUrl)
         {
-            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
+            using (var client = new Hl7.Fhir.Rest.FhirClient(url))
             {
                 try
                 {
-                    client.Delete(resourceToBeDeleted);
-                    return true;
-                }
-                catch (FhirOperationException)
-                {
-                    return false;
-                    //return Microsoft.AspNetCore.Http.StatusCodes.Status404NotFound.ToString();
-                }
-            }
-        }
-
-        private Resource createResource(Resource resourceToBeCreated)
-        {
-            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
-            {
-                try
-                {
-                    var res = client.Create(resourceToBeCreated);
-                    return res;
+                    switch (operation)
+                    {
+                        case "create":
+                            return client.Create(resourceToBeprocessed);
+                        case "delete":
+                            client.Delete(resourceToBeprocessed);
+                            return null;
+                        case "update":
+                            return client.Update(resourceToBeprocessed);
+                        default:
+                            return null;
+                    }
                 }
                 catch (FhirOperationException)
                 {
@@ -169,22 +159,44 @@ namespace FhirClient.Models
         }
 
 
-        private Resource updateResource(Resource resourceToBeUpdated)
+        /// <summary>
+        /// Get all resources from fhir server, move them to collection. Bases upon typ of given list
+        /// </summary>
+        /// <typeparam name="T">resource (e.g. patient)</typeparam>
+        /// <param name="list">list to be filled</param>
+        /// <param name="maxEntries"># of entries to be fetched</param>
+        /// <returns></returns>
+        private List<T> getResources<T>(List<T> list, int maxEntries, SearchParams q = null, string fhirUrl = _baseUrl) where T : Resource
         {
-            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
+            using (var client = new Hl7.Fhir.Rest.FhirClient(fhirUrl))
             {
-                try
+                if (q is null)
                 {
-                    var res = client.Update(resourceToBeUpdated);
-                    return res;
+                    q = new SearchParams()
+                        .LimitTo(maxEntries)
+                        .OrderBy("lastUpdated", SortOrder.Descending);
                 }
-                catch (FhirOperationException)
+
+                Bundle res = client.Search<T>(q);
+                while (res != null && list.Count() < maxEntries)
                 {
-                    return null;
+                    foreach (var item in res.Entry)
+                    {
+                        if (item.Resource.GetType() != typeof(OperationOutcome) && list.Count() < maxEntries)
+                        {
+                            var p = (T)item.Resource;
+                            list.Add(p);
+                        }
+                    }
+                    res = client.Continue(res, PageDirection.Next);
                 }
+                return list;
             }
         }
 
+        private string resourceToJson(Resource resource) => new FhirJsonSerializer().SerializeToString(resource);
+        private Base jsonToBase(string json) => new FhirJsonParser().Parse(json); // FormatException
+        private string resourceToXml(Resource resource) => new FhirXmlSerializer().SerializeToString(resource);
 
         private Patient cleansePatient(Patient pat)
         {
@@ -275,65 +287,5 @@ namespace FhirClient.Models
             pat.GeneralPractitioner.Add(new ResourceReference("GPReference","smt to display"));
             return pat;
         }
-
-
-        private string resourceToJson(Resource resource) => new FhirJsonSerializer().SerializeToString(resource);
-        private Base jsonToBase(string json) => new FhirJsonParser().Parse(json);
-        private string resourceToXml(Resource resource) => new FhirXmlSerializer().SerializeToString(resource);
-
-
-
-        private Resource getResourceFromJson(string json)
-        {
-            var parser = new FhirJsonParser();
-            try
-            {
-                Resource parsedResource = parser.Parse<Resource>(json);
-                return parsedResource;
-            }
-            catch (FormatException)
-            {
-                throw new FormatException();
-            }
-        }
-
-
-        /// <summary>
-        /// Get all resources from fhir server, move them to collection. Bases upon typ of given list
-        /// </summary>
-        /// <typeparam name="T">resource (e.g. patient)</typeparam>
-        /// <param name="list">list to be filled</param>
-        /// <param name="maxEntries"># of entries to be fetched</param>
-        /// <returns></returns>
-        private List<T> getResources<T>(List<T> list, int maxEntries, SearchParams q=null, string fhirUrl=_baseUrl) where T : Resource
-        {
-            using (var client = new Hl7.Fhir.Rest.FhirClient(fhirUrl))
-            {
-                if (q is null)
-                {
-                    q = new SearchParams()
-                        .LimitTo(maxEntries)
-                        .OrderBy("lastUpdated", SortOrder.Descending);
-                }
-
-                Bundle res = client.Search<T>(q);
-                while (res != null && list.Count() < maxEntries)
-                {
-                    foreach (var item in res.Entry)
-                    {
-                        if (item.Resource.GetType() != typeof(OperationOutcome) && list.Count() < maxEntries)
-                        {
-                            var p = (T)item.Resource;
-                            list.Add(p);
-                        }
-                    }
-                    res = client.Continue(res, PageDirection.Next);
-                }
-                return list;
-            }
-        }
-
-
-
     }
 }
