@@ -2,6 +2,7 @@
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Serialization;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,22 @@ namespace FhirClient.Models
         public List<Observation> GetObservations();
         public Observation GetObservation(string id);
 
-        public ValueSet GetValueSet(string valueSetUrl);
+        /// <summary>
+        /// Gets ValueSet from terminology server
+        /// </summary>
+        /// <param name="fullUrl">Must fully be qualified incl. /$expand</param>
+        /// <returns>object parsed from json</returns>
+        public ValueSet GetValueSet(string fullUrl);
+
+
+        /// <summary>
+        /// Gets CodeSystem from canonical site
+        /// </summary>
+        /// <remarks>
+        /// ExpandValueSet is seemingly not working, method uses resharper.
+        /// </remarks>
+        /// <param name="codeSystemUrl">Must be fully qualified. Example: "https://r4.ontoserver.csiro.au/fhir/ValueSet/v2-0131/$expand"</param>
+        /// <returns>object parsed from json</returns>
         public CodeSystem GetCodeSystem(string codeSystemUrl); 
 
     }
@@ -40,7 +56,6 @@ namespace FhirClient.Models
 
     public class Repository : IRepository
     {
-        //private const string _onto = "https://r4.ontoserver.csiro.au/fhir";
         //private const string _tx = "http://tx.fhir.org/r4";
         //private const string _snowVs = "http://snomed.info/sct?fhir_vs=refset/1072351000168102";
         //private const string _isoVs = "urn:iso:std:iso:3166";
@@ -48,6 +63,7 @@ namespace FhirClient.Models
 
         private const string _baseUrl = "https://vonk.fire.ly/R4"; 
         private const string _onto3 = "https://ontoserver.csiro.au/stu3-latest";
+        private const string _onto = "https://r4.ontoserver.csiro.au/fhir";
 
 
         public Repository()
@@ -82,30 +98,55 @@ namespace FhirClient.Models
         public List<Organization> GetOrganizations() => getResources(new List<Organization>(), 20);
 
         /*   TERMINOLOGY   */
-        public ValueSet GetValueSet(string valueSetUrl) => jsonToBase(Helper.GetStringFromUrl(valueSetUrl)) as ValueSet;
+
+        public ValueSet GetValueSet(string fullUrl) => jsonToBase(getResponseFromUrl(fullUrl).Content) as ValueSet;
         public CodeSystem GetCodeSystem(string codeSystemUrl) => jsonToBase(Helper.GetStringFromUrl(codeSystemUrl)) as CodeSystem;
 
 
         /*    private     */
 
         /// <summary>
-        /// OneTime (static) setups
+        /// OneTime (static) setups. Should be in controller?
         /// </summary>
         private void initApplication()
         {
             // load static codesystems
             // patient-contactrelationship
-            var cs = GetCodeSystem("https://hl7.org/FHIR/v2/0131/v2-0131.cs.canonical.json");
-            Viewmodels.PatientEditViewmodel.CodeDropdownForContact = new SelectList(cs.Concept.ToList(), "Code", "Display");
+            //var cs = GetCodeSystem("https://hl7.org/FHIR/v2/0131/v2-0131.cs.canonical.json");
 
+
+            //Viewmodels.PatientEditViewmodel.CodeDropdownForContact = new SelectList(cs.Concept.ToList(), "Code", "Display");
+            /*
             // TEST AREA - get ValueSets
             //var list = getResources(new List<ValueSet>(), 50, null, _baseUrl);
-            //using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
-            //{
+            using (var client = new Hl7.Fhir.Rest.FhirClient(_onto))
+            {
             //    // still unclear WHERE the vs is :o
-            //    var res = client.ExpandValueSet(new FhirUri("https://hl7.org/FHIR/valueset-patient-contactrelationship.canonical.json"));
-            //}
+            //    //var res = client.ExpandValueSet(new FhirUri("http://hl7.org/fhir/ValueSet/patient-contactrelationship"));
+            //    //var res = client.ExpandValueSet(new FhirUri("http://terminology.hl7.org/ValueSet/v2-0131"));
+                   var res = client.ExpandValueSet(new FhirUri("https://r4.ontoserver.csiro.au/fhir/ValueSet/v2-0131"));
+            //    //var res = client.ExpandValueSet(new FhirUri("http://hl7.org/fhir/ValueSet/v2-0131"));
+            }
+            */
+            
+            //var res = GetValueSet("https://r4.ontoserver.csiro.au/fhir/ValueSet/v2-0131/$expand");
+        }
 
+
+        /// <summary>
+        /// Gets data via the GET command.
+        /// </summary>
+        /// <remarks>
+        /// Uses ReSharper package.
+        /// </remarks>
+        /// <param name="baseUrl"></param>
+        /// <returns>RestResponse obj</returns>
+        public IRestResponse getResponseFromUrl(string url)
+        {
+            var client = new RestClient(url);
+            var request = new RestRequest();
+            var response = client.Get(request);
+            return response;
         }
 
 
@@ -115,12 +156,13 @@ namespace FhirClient.Models
         /// <param name="id">id as string</param>
         /// <param name="type">the desired type, eg: typeof(Patient)</param>
         /// <returns>Resource or null</returns>
-        private Resource getResourceById(string id, Type type)
+        private Resource getResourceById(string id, Type type, string url=_baseUrl)
         {
-            using (var client = new Hl7.Fhir.Rest.FhirClient(_baseUrl))
+            using (var client = new Hl7.Fhir.Rest.FhirClient(url))
             {
                 try
                 {
+                    var lol = $"{type.Name}/" + id;
                     var res = client.Read<Resource>($"{type.Name}/" + id);
                     return res;
                 }

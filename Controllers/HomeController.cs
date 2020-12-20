@@ -53,25 +53,5 @@ namespace FhirClient.Controllers
             string filePath = Path.Combine(uploadDir, fileName);
             System.IO.File.WriteAllText(filePath, txt);
         }
-
-
-        /// <summary>
-        /// Gets data via the GET command.
-        /// </summary>
-        /// <remarks>
-        /// Uses ReSharper package.
-        /// </remarks>
-        /// <param name="baseUrl"></param>
-        /// <returns>RestResponse obj</returns>
-        [Obsolete]
-        public IRestResponse GetFromUrl(string baseUrl)
-        {
-            var client = new RestClient(baseUrl);
-            var request = new RestRequest();
-            var response = client.Get(request);
-            return response;
-        }
-
-
     }
 }
