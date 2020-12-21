@@ -187,6 +187,6 @@ namespace FhirClient.Viewmodels
             }
         }
 
-        public string lastUpdated { get => _patient.Meta.LastUpdated.ToString(); }
+        public string lastUpdated { get => _patient.Meta?.LastUpdated.ToString(); }
     }
 }

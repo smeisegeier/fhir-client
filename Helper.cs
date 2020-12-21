@@ -1,6 +1,8 @@
 ﻿using FhirClient.Viewmodels;
+using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -31,6 +33,17 @@ namespace FhirClient
             {
                 return webClient.DownloadString(url);
             }
+        }
+
+        public static string ReadTextFromFile(string fullPath) => File.ReadAllText(fullPath);
+
+
+        // TODO improve
+        public static void WriteTextToFile(IWebHostEnvironment webHostEnvironment, string text, string folderExDash, string extensionIncDot, string fileName = null)
+        {
+            string fileNameQ = fileName ?? Guid.NewGuid().ToString();
+            string filePath = webHostEnvironment.WebRootPath + @"\" + folderExDash + @"\" + fileNameQ + extensionIncDot;
+            File.WriteAllText(filePath, text);
         }
     }
 }

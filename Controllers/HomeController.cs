@@ -39,19 +39,5 @@ namespace FhirClient.Controllers
         {
             return View();
         }
-
-
-
-        /// <summary>
-        /// Creates a JSON File from string into files folder
-        /// </summary>
-        /// <param name="txt"></param>
-        private void createJsonFile(string txt)
-        {
-            string uploadDir = Path.Combine(_webHostEnvironment.WebRootPath + @"\files");
-            string fileName = Guid.NewGuid().ToString() + ".json";
-            string filePath = Path.Combine(uploadDir, fileName);
-            System.IO.File.WriteAllText(filePath, txt);
-        }
     }
 }

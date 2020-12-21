@@ -1,0 +1,51 @@
+<Patient xmlns="http://hl7.org/fhir">
+  <id value="8cd9bec9-b41f-42b5-8f8d-fc744d3b12a1" />
+  <meta>
+    <versionId value="c15a7790-8897-419b-873d-8f859f7a70f9" />
+    <lastUpdated value="2020-12-20T16:33:15.492+00:00" />
+    <source value="dexterDSD" />
+  </meta>
+  <identifier>
+    <use value="official" />
+    <type>
+      <coding>
+        <system value="http://example.com/resource?foo=bar#fragment" />
+        <code value="BP" />
+      </coding>
+      <text value="Nice conecpt" />
+    </type>
+    <system value="http://example.org" />
+    <value value="0815" />
+  </identifier>
+  <active value="true" />
+  <name>
+    <use value="official" />
+    <text value="Xenia yenyen Arrayaxxx" />
+    <family value="Arrayaxxx" />
+    <given value="Xenia" />
+    <given value="yenyen" />
+  </name>
+  <name>
+    <use value="nickname" />
+    <text value="Fritzzzz koljajajaj Liston" />
+    <family value="Liston" />
+    <given value="Fritzzzz" />
+    <given value="koljajajaj" />
+  </name>
+  <gender value="other" />
+  <birthDate value="2020-12-31" />
+  <address>
+    <use value="billing" />
+    <type value="postal" />
+    <city value="Munich" />
+    <postalCode value="55234" />
+    <country value="DE" />
+  </address>
+  <maritalStatus>
+    <coding>
+      <system value="http://example.org" />
+      <code value="PR" />
+    </coding>
+    <text value="xDE" />
+  </maritalStatus>
+</Patient>

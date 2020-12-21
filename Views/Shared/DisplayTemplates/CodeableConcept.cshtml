@@ -4,7 +4,7 @@
 
 <div class="form-inline">
     @{
-        @if (Model is not null)
+        @if (Model?.Coding is not null)
         {
             <label class="form-control col-sm-1 bg-warning">Text</label>
             @Html.EditorFor( m => Model.Text, new { htmlattributes = new {@class="form-control col-sm-2"}})

@@ -1,6 +1,7 @@
 ﻿using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Hl7.Fhir.Serialization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using RestSharp;
 using System;
@@ -13,32 +14,33 @@ namespace FhirClient.Models
 {
     public interface IRepository
     {
-        public List<Patient> GetPatients();
-        public List<Patient> GetPatientsByMe();
-        public Patient UpdatePatient(Patient patient);
-        public Patient CreatePatient();
-        public Patient GetPatient(string id);
-        public string GetPatientAsJson(Patient pat);
-        public string GetPatientAsJson(string id);
-        public string GetPatientAsXml(Patient pat);
-        public string GetPatientAsXml(string id);
+        List<Patient> GetPatients();
+        List<Patient> GetPatientsByMe();
+        Patient UpdatePatient(Patient patient);
+        Patient CreatePatient(Patient patient = null);
+        Patient GetPatient(string id);
+        string GetPatientAsJson(Patient pat);
+        string GetPatientAsJson(string id);
+        string GetPatientAsXml(Patient pat);
+        string GetPatientAsXml(string id);
 
         /// <summary>
         /// Deletes Patient.
         /// </summary>
         /// <param name="id">patient object</param>
         /// <returns>null as success</returns>
-        public Resource DeletePatient(string id);
+        Resource DeletePatient(string id);
 
-        public List<Observation> GetObservations();
-        public Observation GetObservation(string id);
+        List<Observation> GetObservations();
+        Observation GetObservation(string id);
 
         /// <summary>
         /// Gets ValueSet from terminology server
         /// </summary>
         /// <param name="fullUrl">Must fully be qualified incl. /$expand</param>
         /// <returns>object parsed from json</returns>
-        public ValueSet GetValueSet(string fullUrl);
+        ValueSet GetValueSet(string fullUrl);
+        Patient CreatePatientFromXml(string fullPath);
 
 
         /// <summary>
@@ -49,7 +51,7 @@ namespace FhirClient.Models
         /// </remarks>
         /// <param name="codeSystemUrl">Must be fully qualified. Example: "https://r4.ontoserver.csiro.au/fhir/ValueSet/v2-0131/$expand"</param>
         /// <returns>object parsed from json</returns>
-        public CodeSystem GetCodeSystem(string codeSystemUrl); 
+        CodeSystem GetCodeSystem(string codeSystemUrl); 
 
     }
 
@@ -81,13 +83,18 @@ namespace FhirClient.Models
         }
 
         public Patient UpdatePatient(Patient patient) => processResource(cleansePatient(patient), "update") as Patient;
-        public Patient CreatePatient() => processResource(initEmptyPatient(), "create") as Patient;
+        public Patient CreatePatient(Patient patient = null) => processResource(patient?? createExamplePatient(), "create") as Patient;
         public Patient GetPatient(string id) => getResourceById(id, typeof(Patient)) as Patient;
         public string GetPatientAsJson(Patient pat) => resourceToJson(pat);
         public string GetPatientAsJson(string id) => GetPatientAsJson(GetPatient(id));
         public string GetPatientAsXml(Patient pat) => resourceToXml(pat);
         public string GetPatientAsXml(string id) => GetPatientAsXml(GetPatient(id));
         public Resource DeletePatient(string id) => processResource(GetPatient(id), "delete");
+        public Patient CreatePatientFromXml(string fullPath)
+        {
+            var pat = xmlToBase(Helper.ReadTextFromFile(fullPath)) as Patient;
+            return pat;
+        }
 
         /*   OBSERVATION   */
 
@@ -112,12 +119,12 @@ namespace FhirClient.Models
         {
             // load static codesystems
             // patient-contactrelationship
-            //var cs = GetCodeSystem("https://hl7.org/FHIR/v2/0131/v2-0131.cs.canonical.json");
-
-
-            //Viewmodels.PatientEditViewmodel.CodeDropdownForContact = new SelectList(cs.Concept.ToList(), "Code", "Display");
-            /*
-            // TEST AREA - get ValueSets
+            var cs = GetCodeSystem("https://hl7.org/FHIR/v2/0131/v2-0131.cs.canonical.json");
+            Viewmodels.PatientEditViewmodel.CodeDropdownForContact = new SelectList(cs.Concept.ToList(), "Code", "Display");
+            
+            
+            
+            /* TEST AREA ****************************
             //var list = getResources(new List<ValueSet>(), 50, null, _baseUrl);
             using (var client = new Hl7.Fhir.Rest.FhirClient(_onto))
             {
@@ -128,7 +135,7 @@ namespace FhirClient.Models
             //    //var res = client.ExpandValueSet(new FhirUri("http://hl7.org/fhir/ValueSet/v2-0131"));
             }
             */
-            
+            // This now works
             //var res = GetValueSet("https://r4.ontoserver.csiro.au/fhir/ValueSet/v2-0131/$expand");
         }
 
@@ -238,6 +245,7 @@ namespace FhirClient.Models
 
         private string resourceToJson(Resource resource) => new FhirJsonSerializer().SerializeToString(resource);
         private Base jsonToBase(string json) => new FhirJsonParser().Parse(json); // FormatException
+        private Base xmlToBase(string xml) => new FhirXmlParser().Parse(xml); // FormatException
         private string resourceToXml(Resource resource) => new FhirXmlSerializer().SerializeToString(resource);
 
         private Patient cleansePatient(Patient pat)
@@ -254,7 +262,7 @@ namespace FhirClient.Models
             }
             return pat;
         }
-        private Patient initEmptyPatient()
+        private Patient createExamplePatient()
         {
             var pat = new Patient();
             pat.Id = Guid.NewGuid().ToString();

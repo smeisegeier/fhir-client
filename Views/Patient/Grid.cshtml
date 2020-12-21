@@ -52,6 +52,7 @@
                             <a asp-controller="Patient" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
                             <a asp-action="ToJson" asp-route-id="@item.Id" class="btn btn-info btn-sm">json</a>
                             <a asp-action="ToXml" asp-route-id="@item.Id" class="btn btn-secondary btn-sm">xml</a>
+                            <a asp-action="WriteToXml" asp-route-id="@item.Id" class="btn btn-secondary btn-sm">file</a>
                             <a asp-controller="Patient" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm" onclick="return confirm('Really delete?');">Delete</a>
 @*                          @Html.ActionLink("Edit", "PatientEdit", new { id = item.Id }) |
                             @Html.ActionLink("Json", "ToJson", new { id = item.Id }) |

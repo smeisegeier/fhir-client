@@ -12,9 +12,4 @@
     <PackageReference Include="RestSharp" Version="106.11.7" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\Shared\EditorTemplates\" />
-    <Folder Include="wwwroot\files\" />
-  </ItemGroup>
-
 </Project>

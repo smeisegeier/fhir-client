@@ -48,8 +48,16 @@ namespace FhirClient.Controllers
         public IActionResult Create()
         {
             //var pat = _repo.CreatePatient();
-            //return RedirectToAction("Grid");
             return View("Edit", new PatientEditViewmodel(_repo.CreatePatient()));
+        }
+
+        [HttpGet]
+        public IActionResult CreateFromFile()
+        {
+            var pat = _repo.CreatePatientFromXml(_webHostEnvironment.WebRootPath + @"\files\PatientExample.xml");
+            _repo.CreatePatient(pat);
+            return RedirectToAction(nameof(Grid));
+            //return View("Edit", new PatientEditViewmodel(pat));
         }
 
         [HttpGet]
@@ -70,6 +78,12 @@ namespace FhirClient.Controllers
 
         [HttpGet]
         public string ToXml(string id) => _repo.GetPatientAsXml(id);
+
+        public IActionResult WriteToXml(string id)
+        {
+            Helper.WriteTextToFile(_webHostEnvironment, _repo.GetPatientAsXml(id), "files", ".xml", "Test");
+            return RedirectToAction(nameof(Grid));
+        }
 
         /// <summary>
         /// Method is called on PatientEdit submit. Updates patient object. Forwards to Result View
