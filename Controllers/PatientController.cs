@@ -17,6 +17,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using AutoWrapper.Wrappers;
 
 namespace FhirClient.Controllers
 {
@@ -133,11 +134,24 @@ namespace FhirClient.Controllers
             return View("Result", new PatientResultViewmodel(patient.Id, success, list, outcome));
         }
 
+        //public IActionResult Delete(string id)
+        //{
+        //    _repo.DeletePatient(id);
+        //    return RedirectToAction("Grid");
+        //}
+
+        //[HttpPost]
+        //public async System.Threading.Tasks.Task<ApiResponse> Delete(string id)
+        //{
+        //    var result = await _repo.DeletePatient(id);
+        //    return RedirectToAction("Grid");
+        //}
+
+        [HttpGet]
         public IActionResult Delete(string id)
         {
-            _repo.DeletePatient(id);
-            return RedirectToAction("Grid");
+            var result = _repo.DeletePatient(id);
+            return View(new ApiResponse($"Yo! workd, Id {result} was deleted"));
         }
-
     }
 }

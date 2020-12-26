@@ -1,0 +1,30 @@
+﻿@model Hl7.Fhir.Model.Organization
+<div class="container">
+    <form asp-action="Edit" method="post">
+        <h1 class="display-4">Orga Edit</h1>
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="border-top">
+            <div class="form-inline">
+                <label asp-for="Id" class="form-control col-sm-2 bg-warning" data-toggle="tooltip" title="Internal server id" data-placement="top"></label>
+                <input asp-for="Id" class="form-control col-sm-4" readonly />
+            </div>
+        </div>
+        <div class="border-top">
+            <div class="form-inline">
+                <label asp-for="Active" class="form-control col-sm-2 bg-warning"></label>
+                @*bool? as datatype is special. options cannot be retrieved from enum or class *@
+                <select asp-for="Active" class="form-control">
+                    <option>not set</option>
+                    <option>true</option>
+                    <option>false</option>
+                </select>
+            </div>
+        </div>
+        <h1 class="display-5">Identifier</h1>
+        @Html.DisplayFor(x => x.Identifier, "Identifier")
+
+        <a class="btn btn-outline-primary" value="submit" >Save</a>
+        <a asp-action="Grid" class="btn btn-outline-primary" name="cancel" id="cancel" >Cancel and <kbd>Esc</kbd> to List</a>
+    </form>
+</div>

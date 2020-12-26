@@ -1,0 +1,21 @@
+﻿@model List<Hl7.Fhir.Model.Identifier>
+@if (Model is not null && Model.Any())
+{
+    @foreach (var item in Model)
+    {
+        int i = @Model.IndexOf(item);
+        <div class="border border-primary pt-3 pb-3 mt-3 mb-3">
+            <div class="form-inline" >
+                <label asp-for="@Model[i].Use" class="form-control col-sm-1 bg-warning"></label>
+                <select asp-for="@Model[i].Use" class="form-control"
+                asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.Identifier.IdentifierUse>()">
+                </select>
+                <label asp-for="@Model[i].System" class="form-control col-sm-1 bg-warning"></label>
+                <input asp-for="@Model[i].System" class="form-control" />
+                <label asp-for="@Model[i].Value" class="form-control col-sm-1 bg-warning"></label>
+                <input asp-for="@Model[i].Value" class="form-control" />
+            </div>
+            @Html.DisplayFor(x => x[i].Type, "CodeableConcept")
+        </div>
+    }
+}

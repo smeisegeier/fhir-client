@@ -1,13 +1,16 @@
-﻿
-<div class="container">
-    <br /><h1>Main menu</h1><br />
-    <a class="btn btn-primary btn-lg" asp-controller="Patient" asp-action="Grid">List Patients</a>
+﻿<div class="container">
+    <br /><h1 class="display-4">Main menu</h1><br />
+    <a class="btn btn-primary btn-lg" asp-controller="Patient" asp-action="Grid" data-toggle="tooltip" title="List em all" >List Patients</a>
     <a class="btn btn-primary btn-lg" asp-controller="Patient" asp-action="GridFromMe">My Patients</a>
     <a class="btn btn-primary btn-lg" asp-controller="Patient" asp-action="Create">Create Patients</a>
     <a class="btn btn-primary btn-lg" asp-controller="Patient" asp-action="CreateFromFile">Create from xml</a>
     <hr />
     <a class="btn btn-info btn-lg" asp-controller="Observation" asp-action="Grid">List Observations</a>
     <hr />
+    <hr />
+    <a class="btn btn-info btn-lg" asp-controller="Organization" asp-action="Grid">List Organization</a>
+    <hr />
+
     <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
   Launch demo modal

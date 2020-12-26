@@ -29,10 +29,13 @@ namespace FhirClient.Models
         /// </summary>
         /// <param name="id">patient object</param>
         /// <returns>null as success</returns>
-        Resource DeletePatient(string id);
+        string DeletePatient(string id);
 
         List<Observation> GetObservations();
         Observation GetObservation(string id);
+
+        List<Organization> GetOrganizations();
+        Organization GetOrganization(string id);
 
         /// <summary>
         /// Gets ValueSet from terminology server
@@ -89,7 +92,12 @@ namespace FhirClient.Models
         public string GetPatientAsJson(string id) => GetPatientAsJson(GetPatient(id));
         public string GetPatientAsXml(Patient pat) => resourceToXml(pat);
         public string GetPatientAsXml(string id) => GetPatientAsXml(GetPatient(id));
-        public Resource DeletePatient(string id) => processResource(GetPatient(id), "delete");
+        public string DeletePatient(string id) 
+        {
+            // TODO exception? ApiException xDE 
+            processResource(GetPatient(id), "delete");
+            return id;
+        }
         public Patient CreatePatientFromXml(string fullPath)
         {
             var pat = xmlToBase(Helper.ReadTextFromFile(fullPath)) as Patient;
@@ -103,6 +111,7 @@ namespace FhirClient.Models
 
         /*   ORGANIZATION   */
         public List<Organization> GetOrganizations() => getResources(new List<Organization>(), 20);
+        public Organization GetOrganization(string id) => getResourceById(id, typeof(Organization)) as Organization;
 
         /*   TERMINOLOGY   */
 
@@ -202,7 +211,7 @@ namespace FhirClient.Models
                 }
                 catch (FhirOperationException)
                 {
-                    return null;
+                    throw;
                 }
             }
         }

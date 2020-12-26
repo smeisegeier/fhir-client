@@ -1,13 +1,16 @@
 ﻿@model FhirClient.Viewmodels.PatientEditViewmodel
+
+
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <div class="border-3">
     <div class="form-inline">
-        <label asp-for="Id" class="form-control col-sm-2 bg-warning"></label>
+        <label asp-for="Id" class="form-control col-sm-2 bg-warning" data-toggle="tooltip" title="Internal server id" data-placement="top"></label>
         <input asp-for="Id" class="form-control col-sm-4" readonly />
         <input asp-for="lastUpdated" class="form-control col-sm-2" readonly />
     </div>
 </div>
 <br />
+<div class="border-top">
     <div class="form-inline">
         <label asp-for="Active" class="form-control col-sm-2 bg-warning"></label>
         <!-- bool? as datatype is special. options cannot be retrieved from enum or class 
@@ -19,6 +22,7 @@
         <!--insert no break spaces to shove checkbox to the right-->
         <span>&nbsp;&nbsp;&nbsp;</span>
         <input asp-for="Active" class="form-control"/>
+    </div>
 </div>
 <br />
 <div class="form-inline">
@@ -36,25 +40,7 @@
 </div>
 
 <hr /><h4>Identifier</h4>
-@if (Model.Identifier is not null && Model.Identifier.Any())
-{
-    @for (int i=0; i< Model.Identifier.Count(); i++)
-    {
-        <div class="border border-primary pt-3 pb-3 mt-3 mb-3">
-            <div class="form-inline" >
-                <label asp-for="Identifier[i].Use" class="form-control col-sm-1 bg-warning"></label>
-                <select asp-for="Identifier[i].Use" class="form-control"
-                asp-items="Html.GetEnumSelectList<Hl7.Fhir.Model.Identifier.IdentifierUse>()">
-                </select>
-                <label asp-for="Identifier[i].System" class="form-control col-sm-1 bg-warning"></label>
-                <input asp-for="Identifier[i].System" class="form-control" />
-                <label asp-for="Identifier[i].Value" class="form-control col-sm-1 bg-warning"></label>
-                <input asp-for="Identifier[i].Value" class="form-control" />
-            </div>
-            @Html.DisplayFor(x => x.Identifier[i].Type, "CodeableConcept")
-        </div>
-    }
-}
+@Html.DisplayFor(x => x.Identifier, "Identifier")
 
 <hr /><h4>Name</h4>
 @Html.DisplayFor(x => x.Name, "Name")
@@ -83,29 +69,8 @@
 }
 
 <hr /><h4>Marital Status</h4><br />
-@*
-<div class="form-inline">
-    <label asp-for="MaritalStatus.Text" class="form-control col-sm-1 bg-warning"></label>
-    <input asp-for="MaritalStatus.Text" class="form-control col-sm-3" />
-</div>
+@Html.DisplayFor(x => x.MaritalStatus, "CodeableConcept")
 
-*@@Html.DisplayFor(x => x.MaritalStatus, "CodeableConcept")
-@*
-@if (Model.MaritalStatus is not null && Model.MaritalStatus.Coding.Any())
-{
-    @for (int i=0; i < Model.MaritalStatus.Coding.Count(); i++) 
-    {
-        <div class="form-inline">
-            <label asp-for="MaritalStatus.Coding[i].Code" class="form-control col-sm-1 bg-warning"></label>
-            <input asp-for="MaritalStatus.Coding[i].Code" class="form-control col-sm-2" />
-            <label asp-for="MaritalStatus.Coding[i].Display" class="form-control col-sm-1 bg-warning"></label>
-            <input asp-for="MaritalStatus.Coding[i].Display" class="form-control col-sm-2" />
-            <label asp-for="MaritalStatus.Coding[i].System" class="form-control col-sm-1 bg-warning"></label>
-            <input asp-for="MaritalStatus.Coding[i].System" class="form-control col-sm-3" />
-        </div>
-    }
-}
-*@
 @*
 <hr /><h4>Deceased</h4><br />
 <div class="form-inline">
@@ -192,27 +157,6 @@
         </div>
     }
 }
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Modal Test</button>
-
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">eTeste</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 
