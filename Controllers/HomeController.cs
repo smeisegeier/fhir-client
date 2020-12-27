@@ -16,6 +16,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using FhirClient.Models;
 
 namespace FhirClient.Controllers 
 {
@@ -44,22 +45,27 @@ namespace FhirClient.Controllers
         [HttpPost]
         public IActionResult Dropzone(IFormFile file)
         {
-            Helper.IFormFileToFile(file, Path.Combine(_webHostEnvironment.WebRootPath, _uploadDir));
+            HelperLibrary.WebHelper.IFormFileToFile(file, Path.Combine(_webHostEnvironment.WebRootPath, _uploadDir));
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public IActionResult UploadHandling()
         {
-            var fileInfos = Helper.GetFileInfoFromDirectory(Path.Combine(_webHostEnvironment.WebRootPath, _uploadDir));
+            var fileInfos = HelperLibrary.FileHelper.GetFileInfoFromDirectory(Path.Combine(_webHostEnvironment.WebRootPath, _uploadDir));
             try
             {
                 foreach (var item in fileInfos)
                 {
-                    // Create object here
-                    var baseObj = _repo.CreateBaseObjectFromXmlOrJson(item.FullName);
-                    //if (baseObj is Patient) { _repo.CreatePatient(baseObj as Patient); }
-                    _repo.CreateResource(baseObj as Resource);
+                    if (item.FullName.Substring(item.FullName.Length - 4, 4) == ".xml")
+                    {
+                        _repo.CreateResource(System.IO.File.ReadAllText(item.FullName).ToFhirBaseFromXml() as Resource);
+                    }
+                    if (item.FullName.Substring(item.FullName.Length - 5, 5) == ".json")
+                    {
+                        _repo.CreateResource(System.IO.File.ReadAllText(item.FullName).ToFhirBaseFromJson() as Resource);
+                    }
+
                     // now delete files anyway
                     item.Delete();
                 }

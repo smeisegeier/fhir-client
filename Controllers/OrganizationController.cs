@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Hl7.Fhir.Serialization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -35,5 +36,9 @@ namespace FhirClient.Controllers
 
         [HttpGet]
         public IActionResult ToJson(string id) => new JsonResult(_repo.GetOrganization(id));
+
+        [HttpGet]
+        public IActionResult ToXml(string id) => Content(_repo.GetOrganization(id).ToXml());
+
     }
 }

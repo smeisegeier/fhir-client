@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using AutoWrapper.Wrappers;
+using Hl7.Fhir.Serialization;
 
 namespace FhirClient.Controllers
 {
@@ -66,14 +67,14 @@ namespace FhirClient.Controllers
 
 
         [HttpGet]
-        public string ToJson(string id) => _repo.GetPatientAsJson(id);
+        public JsonResult ToJson(string id) => new JsonResult(_repo.GetPatient(id));
 
         [HttpGet]
-        public string ToXml(string id) => _repo.GetPatientAsXml(id);
+        public string ToXml(string id) => _repo.GetPatient(id).ToXml();
 
         public IActionResult WriteToXml(string id)
         {
-            Helper.WriteTextToFile(_webHostEnvironment, _repo.GetPatientAsXml(id), "files", ".xml", "Test");
+            HelperLibrary.FileHelper.WriteStringToFile(_repo.GetPatient(id).ToXml(), Path.Combine(_webHostEnvironment.WebRootPath,"files"), ".xml");
             return RedirectToAction(nameof(Grid));
         }
 

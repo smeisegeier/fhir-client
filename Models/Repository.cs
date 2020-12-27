@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -19,10 +20,6 @@ namespace FhirClient.Models
         Patient UpdatePatient(Patient patient);
         Patient CreatePatient(Patient patient = null);
         Patient GetPatient(string id);
-        string GetPatientAsJson(Patient pat);
-        string GetPatientAsJson(string id);
-        string GetPatientAsXml(Patient pat);
-        string GetPatientAsXml(string id);
 
         /// <summary>
         /// Deletes Patient.
@@ -43,22 +40,6 @@ namespace FhirClient.Models
         /// <param name="fullUrl">Must fully be qualified incl. /$expand</param>
         /// <returns>object parsed from json</returns>
         ValueSet GetValueSet(string fullUrl);
-        //Patient CreatePatientFromXml(string fullPath);
-
-        /// <summary>
-        /// Delivers base object
-        /// </summary>
-        /// <param name="fullPath">full path</param>
-        /// <returns>base object</returns>
-        Base CreateBaseObjectFromXmlOrJson(string fullPath);
-
-        /// <summary>
-        /// Delivers base object
-        /// </summary>
-        /// <param name="xmlOrJsonString">either content</param>
-        /// <param name="type">xml | json</param>
-        /// <returns></returns>
-        Base CreateBaseObjectFromXmlOrJson(string xmlOrJsonString, string type);
 
         Resource CreateResource(Resource resource);
 
@@ -94,32 +75,7 @@ namespace FhirClient.Models
 
         /*   BASE / RESOURCE       */
         
-        
-        public Base CreateBaseObjectFromXmlOrJson(string fullPath)
-        {
-            if (fullPath.Substring(fullPath.Length-4, 4) == ".xml")
-            {
-                return xmlToBase(Helper.ReadTextFromFile(fullPath));
-            }
-            if (fullPath.Substring(fullPath.Length - 5, 5) == ".json")
-            {
-                return jsonToBase(Helper.ReadTextFromFile(fullPath));
-            }
-            return null;
-        }
 
-        public Base CreateBaseObjectFromXmlOrJson(string xmlOrJsonString, string type)
-        {
-            if (type == "xml")
-            {
-                return xmlToBase(xmlOrJsonString);
-            }
-            if (type == "json")
-            {
-                return jsonToBase(xmlOrJsonString);
-            }
-            return null;
-        }
 
         public Resource CreateResource(Resource resource) => processResource(resource, "create");
 
@@ -136,10 +92,6 @@ namespace FhirClient.Models
         public Patient UpdatePatient(Patient patient) => processResource(cleansePatient(patient), "update") as Patient;
         public Patient CreatePatient(Patient patient = null) => processResource(patient?? createExamplePatient(), "create") as Patient;
         public Patient GetPatient(string id) => getResourceById(id, typeof(Patient)) as Patient;
-        public string GetPatientAsJson(Patient pat) => resourceToJson(pat);
-        public string GetPatientAsJson(string id) => GetPatientAsJson(GetPatient(id));
-        public string GetPatientAsXml(Patient pat) => resourceToXml(pat);
-        public string GetPatientAsXml(string id) => GetPatientAsXml(GetPatient(id));
         public string DeletePatient(string id) 
         {
             // TODO exception? ApiException xDE 
@@ -149,7 +101,7 @@ namespace FhirClient.Models
         // TODO extension! xDE
         public Patient _CreatePatientFromXml(string fullPath)
         {
-            var pat = xmlToBase(Helper.ReadTextFromFile(fullPath)) as Patient;
+            var pat = xmlToBase(File.ReadAllText(fullPath)) as Patient;
             return pat;
         }
 
@@ -165,7 +117,7 @@ namespace FhirClient.Models
         /*   TERMINOLOGY   */
 
         public ValueSet GetValueSet(string fullUrl) => jsonToBase(getResponseFromUrl(fullUrl).Content) as ValueSet;
-        public CodeSystem GetCodeSystem(string codeSystemUrl) => jsonToBase(Helper.GetStringFromUrl(codeSystemUrl)) as CodeSystem;
+        public CodeSystem GetCodeSystem(string codeSystemUrl) => jsonToBase(HelperLibrary.WebHelper.GetStringFromUrl(codeSystemUrl)) as CodeSystem;
 
 
         /*    private     */
@@ -301,10 +253,10 @@ namespace FhirClient.Models
             }
         }
 
-        private string resourceToJson(Resource resource) => new FhirJsonSerializer().SerializeToString(resource);
         private Base jsonToBase(string json) => new FhirJsonParser().Parse(json); // FormatException
         private Base xmlToBase(string xml) => new FhirXmlParser().Parse(xml); // FormatException
-        private string resourceToXml(Resource resource) => new FhirXmlSerializer().SerializeToString(resource);
+
+      
 
         private Patient cleansePatient(Patient pat)
         {
