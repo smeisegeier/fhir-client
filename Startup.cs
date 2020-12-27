@@ -38,7 +38,7 @@ namespace FhirClient
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-            //app.UseStaticFiles();
+            app.UseStaticFiles();
             app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions() { IsApiOnly = false, IsDebug=true }); // use before routing
             app.UseRouting();
             app.UseHttpsRedirection();

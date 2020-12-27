@@ -94,7 +94,7 @@
 	</telecom>
 	<!--   use FHIR code system for male / female   -->
 	<gender value="male"/>
-	<birthDate value="1974-12-25">
+	<birthDate value="1960-05-01">
 		<extension url="http://hl7.org/fhir/StructureDefinition/patient-birthTime">
 			<valueDateTime value="1974-12-25T14:35:45-05:00"/>
 		</extension>

@@ -23,6 +23,7 @@ namespace FhirClient.Controllers
     {
         private IWebHostEnvironment _webHostEnvironment;
         private readonly Models.IRepository _repo;
+        private string _uploadDir = "uploadedFiles";
 
         /// <summary>
         /// Controller is recreated after every callback into actions?!
@@ -35,9 +36,41 @@ namespace FhirClient.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index() => View();
+
+        [HttpGet]
+        public IActionResult Dropzone() => View();
+
+        [HttpPost]
+        public IActionResult Dropzone(IFormFile file)
         {
-            return View();
+            Helper.IFormFileToFile(file, Path.Combine(_webHostEnvironment.WebRootPath, _uploadDir));
+            return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public IActionResult UploadHandling()
+        {
+            var fileInfos = Helper.GetFileInfoFromDirectory(Path.Combine(_webHostEnvironment.WebRootPath, _uploadDir));
+            try
+            {
+                foreach (var item in fileInfos)
+                {
+                    // Create object here
+                    var baseObj = _repo.CreateBaseObjectFromXmlOrJson(item.FullName);
+                    //if (baseObj is Patient) { _repo.CreatePatient(baseObj as Patient); }
+                    _repo.CreateResource(baseObj as Resource);
+                    // now delete files anyway
+                    item.Delete();
+                }
+                // TODO ApiResponse / success page xDE
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }

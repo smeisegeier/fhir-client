@@ -53,15 +53,6 @@ namespace FhirClient.Controllers
         }
 
         [HttpGet]
-        public IActionResult CreateFromFile()
-        {
-            var pat = _repo.CreatePatientFromXml(_webHostEnvironment.WebRootPath + @"\files\PatientExample.xml");
-            _repo.CreatePatient(pat);
-            return RedirectToAction(nameof(Grid));
-            //return View("Edit", new PatientEditViewmodel(pat));
-        }
-
-        [HttpGet]
         public IActionResult Edit(string id)
         {
             var pat = _repo.GetPatient(id);

@@ -43,8 +43,24 @@ namespace FhirClient.Models
         /// <param name="fullUrl">Must fully be qualified incl. /$expand</param>
         /// <returns>object parsed from json</returns>
         ValueSet GetValueSet(string fullUrl);
-        Patient CreatePatientFromXml(string fullPath);
+        //Patient CreatePatientFromXml(string fullPath);
 
+        /// <summary>
+        /// Delivers base object
+        /// </summary>
+        /// <param name="fullPath">full path</param>
+        /// <returns>base object</returns>
+        Base CreateBaseObjectFromXmlOrJson(string fullPath);
+
+        /// <summary>
+        /// Delivers base object
+        /// </summary>
+        /// <param name="xmlOrJsonString">either content</param>
+        /// <param name="type">xml | json</param>
+        /// <returns></returns>
+        Base CreateBaseObjectFromXmlOrJson(string xmlOrJsonString, string type);
+
+        Resource CreateResource(Resource resource);
 
         /// <summary>
         /// Gets CodeSystem from canonical site
@@ -76,6 +92,38 @@ namespace FhirClient.Models
             initApplication();
         }
 
+        /*   BASE / RESOURCE       */
+        
+        
+        public Base CreateBaseObjectFromXmlOrJson(string fullPath)
+        {
+            if (fullPath.Substring(fullPath.Length-4, 4) == ".xml")
+            {
+                return xmlToBase(Helper.ReadTextFromFile(fullPath));
+            }
+            if (fullPath.Substring(fullPath.Length - 5, 5) == ".json")
+            {
+                return jsonToBase(Helper.ReadTextFromFile(fullPath));
+            }
+            return null;
+        }
+
+        public Base CreateBaseObjectFromXmlOrJson(string xmlOrJsonString, string type)
+        {
+            if (type == "xml")
+            {
+                return xmlToBase(xmlOrJsonString);
+            }
+            if (type == "json")
+            {
+                return jsonToBase(xmlOrJsonString);
+            }
+            return null;
+        }
+
+        public Resource CreateResource(Resource resource) => processResource(resource, "create");
+
+
         /*   PATIENT   */
         public List<Patient> GetPatients() => getResources(new List<Patient>(),20);
 
@@ -98,7 +146,8 @@ namespace FhirClient.Models
             processResource(GetPatient(id), "delete");
             return id;
         }
-        public Patient CreatePatientFromXml(string fullPath)
+        // TODO extension! xDE
+        public Patient _CreatePatientFromXml(string fullPath)
         {
             var pat = xmlToBase(Helper.ReadTextFromFile(fullPath)) as Patient;
             return pat;
