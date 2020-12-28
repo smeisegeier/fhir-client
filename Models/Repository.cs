@@ -98,12 +98,6 @@ namespace FhirClient.Models
             processResource(GetPatient(id), "delete");
             return id;
         }
-        // TODO extension! xDE
-        public Patient _CreatePatientFromXml(string fullPath)
-        {
-            var pat = xmlToBase(File.ReadAllText(fullPath)) as Patient;
-            return pat;
-        }
 
         /*   OBSERVATION   */
 
@@ -116,8 +110,8 @@ namespace FhirClient.Models
 
         /*   TERMINOLOGY   */
 
-        public ValueSet GetValueSet(string fullUrl) => jsonToBase(getResponseFromUrl(fullUrl).Content) as ValueSet;
-        public CodeSystem GetCodeSystem(string codeSystemUrl) => jsonToBase(HelperLibrary.WebHelper.GetStringFromUrl(codeSystemUrl)) as CodeSystem;
+        public ValueSet GetValueSet(string fullUrl) => getResponseFromUrl(fullUrl).Content.ToFhirBaseFromJson() as ValueSet;
+        public CodeSystem GetCodeSystem(string codeSystemUrl) => HelperLibrary.WebHelper.GetStringFromUrl(codeSystemUrl).ToFhirBaseFromJson() as CodeSystem;
 
 
         /*    private     */
@@ -252,11 +246,7 @@ namespace FhirClient.Models
                 return list;
             }
         }
-
-        private Base jsonToBase(string json) => new FhirJsonParser().Parse(json); // FormatException
-        private Base xmlToBase(string xml) => new FhirXmlParser().Parse(xml); // FormatException
-
-      
+     
 
         private Patient cleansePatient(Patient pat)
         {

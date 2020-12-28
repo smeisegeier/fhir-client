@@ -9,21 +9,18 @@ namespace FhirClient.Models
 {
     public static class Extensions
     {
-        ///// <summary>
-        ///// Returns object as json string
-        ///// </summary>
-        ///// <param name="baseObj">base object</param>
-        ///// <returns>json</returns>
-        //public static string ToJson(this Base baseObj) => new FhirJsonSerializer().SerializeToString(baseObj);
-
-        ///// <summary>
-        ///// Returns object as xml string
-        ///// </summary>
-        ///// <param name="baseObj"></param>
-        ///// <returns>xml</returns>
-        //public static string ToXml(this Base baseObj) => new FhirXmlSerializer().SerializeToString(baseObj);
-
+        /// <summary>
+        /// Returns Base object of json string
+        /// </summary>
+        /// <param name="json">json string</param>
+        /// <returns>base objecte</returns>
         public static Base ToFhirBaseFromJson(this string json) => new FhirJsonParser().Parse(json); // FormatException
+
+        /// <summary>
+        /// Returns Base object of xml string
+        /// </summary>
+        /// <param name="xml">xml</param>
+        /// <returns>Base Object</returns>
         public static Base ToFhirBaseFromXml(this string xml) => new FhirXmlParser().Parse(xml); // FormatException
     }
 }

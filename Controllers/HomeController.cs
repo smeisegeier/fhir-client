@@ -78,5 +78,7 @@ namespace FhirClient.Controllers
             }
         }
 
+        public IActionResult Privacy() => View();
+
     }
 }
