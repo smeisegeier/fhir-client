@@ -2,9 +2,7 @@
 <div class="container">
 <form asp-action="Edit" method="post">
     <br /><h2>Patient Edit</h2><br />
-
-    @Html.Partial("_Patient")
-
+    <partial name="_Patient" />
     <hr />
     <button type="submit" name ="submit" value="Save" class="btn btn-primary">Save Patient</button>
     <button type="submit" name= "submit" value="Validate" class="btn btn-primary">Save & Validate</button>

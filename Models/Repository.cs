@@ -111,7 +111,7 @@ namespace FhirClient.Models
         /*   TERMINOLOGY   */
 
         public ValueSet GetValueSet(string fullUrl) => getResponseFromUrl(fullUrl).Content.ToFhirBaseFromJson() as ValueSet;
-        public CodeSystem GetCodeSystem(string codeSystemUrl) => HelperLibrary.WebHelper.GetStringFromUrl(codeSystemUrl).ToFhirBaseFromJson() as CodeSystem;
+        public CodeSystem GetCodeSystem(string codeSystemUrl) => DextersLabor.WebHelper.GetStringFromUrl(codeSystemUrl).ToFhirBaseFromJson() as CodeSystem;
 
 
         /*    private     */

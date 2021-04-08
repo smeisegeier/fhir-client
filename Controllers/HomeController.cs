@@ -45,14 +45,14 @@ namespace FhirClient.Controllers
         [HttpPost]
         public IActionResult Dropzone(IFormFile file)
         {
-            HelperLibrary.WebHelper.IFormFileToFile(file, Path.Combine(_webHostEnvironment.WebRootPath, _uploadDir));
+            DextersLabor.WebHelper.IFormFileToFile(file, Path.Combine(_webHostEnvironment.WebRootPath, _uploadDir));
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
         public IActionResult UploadHandling()
         {
-            var fileInfos = HelperLibrary.FileHelper.GetFileInfoFromDirectory(Path.Combine(_webHostEnvironment.WebRootPath, _uploadDir));
+            var fileInfos = DextersLabor.FileHelper.GetFileInfoFromDirectory(Path.Combine(_webHostEnvironment.WebRootPath, _uploadDir));
             try
             {
                 foreach (var item in fileInfos)

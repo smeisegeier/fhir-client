@@ -68,7 +68,7 @@ namespace FhirClient.Viewmodels
         {
             get
             {
-                return HelperLibrary.DateTimeHelper.IsoToDateTime(_patient.BirthDate);
+                return DextersLabor.DateTimeHelper.IsoToDateTime(_patient.BirthDate);
             }
             set
             {
@@ -143,7 +143,7 @@ namespace FhirClient.Viewmodels
         { 
             get 
             { 
-                return _patient.Deceased?.GetType() == typeof(FhirDateTime) ? HelperLibrary.DateTimeHelper.IsoToDateTime(((FhirDateTime)_patient.Deceased).Value) : null; 
+                return _patient.Deceased?.GetType() == typeof(FhirDateTime) ? DextersLabor.DateTimeHelper.IsoToDateTime(((FhirDateTime)_patient.Deceased).Value) : null; 
             } 
             set
             {

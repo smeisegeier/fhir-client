@@ -74,7 +74,7 @@ namespace FhirClient.Controllers
 
         public IActionResult WriteToXml(string id)
         {
-            HelperLibrary.FileHelper.WriteStringToFile(_repo.GetPatient(id).ToXml(), Path.Combine(_webHostEnvironment.WebRootPath,"files"), ".xml");
+            DextersLabor.FileHelper.WriteStringToFile(_repo.GetPatient(id).ToXml(), Path.Combine(_webHostEnvironment.WebRootPath,"files"), ".xml");
             return RedirectToAction(nameof(Grid));
         }
 
