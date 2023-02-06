@@ -1,21 +1,23 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Content Remove="C:\Users\dexter_DSD\.nuget\packages\hl7.fhir.specification.r4\2.0.1\contentFiles\any\any\specification.zip" />
-  </ItemGroup>
+  <!-- <ItemGroup>
+    <Content
+  Remove="C:\Users\dexter_DSD\.nuget\packages\hl7.fhir.specification.r4\2.0.1\contentFiles\any\any\specification.zip"
+  />
+  </ItemGroup> -->
 
   <ItemGroup>
-    <PackageReference Include="AutoWrapper.Core" Version="4.3.1" />
+    <PackageReference Include="AutoWrapper.Core" Version="4.5.0" />
     <PackageReference Include="DextersLabor" Version="0.9.2" />
-    <PackageReference Include="Hl7.Fhir.R4" Version="2.0.1" />
-    <PackageReference Include="Hl7.Fhir.Specification.R4" Version="2.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="RestSharp" Version="106.11.7" />
+    <PackageReference Include="Hl7.Fhir.R4" Version="4.3.0" />
+    <PackageReference Include="Hl7.Fhir.Specification.R4" Version="4.3.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="RestSharp" Version="108.0.4" />
   </ItemGroup>
 
   <ItemGroup>

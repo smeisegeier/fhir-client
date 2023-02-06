@@ -51,7 +51,7 @@ namespace FhirClient.Models
         /// </remarks>
         /// <param name="codeSystemUrl">Must be fully qualified. Example: "https://r4.ontoserver.csiro.au/fhir/ValueSet/v2-0131/$expand"</param>
         /// <returns>object parsed from json</returns>
-        CodeSystem GetCodeSystem(string codeSystemUrl); 
+        CodeSystem GetCodeSystem(string codeSystemUrl);
 
     }
 
@@ -63,7 +63,7 @@ namespace FhirClient.Models
         //private const string _isoVs = "urn:iso:std:iso:3166";
 
 
-        private const string _baseUrl = "https://vonk.fire.ly/R4"; 
+        private const string _baseUrl = "https://vonk.fire.ly/R4";
         private const string _onto3 = "https://ontoserver.csiro.au/stu3-latest";
         private const string _onto = "https://r4.ontoserver.csiro.au/fhir";
 
@@ -74,25 +74,25 @@ namespace FhirClient.Models
         }
 
         /*   BASE / RESOURCE       */
-        
+
 
 
         public Resource CreateResource(Resource resource) => processResource(resource, "create");
 
 
         /*   PATIENT   */
-        public List<Patient> GetPatients() => getResources(new List<Patient>(),20);
+        public List<Patient> GetPatients() => getResources(new List<Patient>(), 20);
 
         public List<Patient> GetPatientsByMe()
         {
             // you may want to create searchparams..
-            return getResources(new List<Patient>(),100).FindAll(i => i.Meta.Source == "dexterDSD");
+            return getResources(new List<Patient>(), 100).FindAll(i => i.Meta.Source == "dexterDSD");
         }
 
         public Patient UpdatePatient(Patient patient) => processResource(cleansePatient(patient), "update") as Patient;
-        public Patient CreatePatient(Patient patient = null) => processResource(patient?? createExamplePatient(), "create") as Patient;
+        public Patient CreatePatient(Patient patient = null) => processResource(patient ?? createExamplePatient(), "create") as Patient;
         public Patient GetPatient(string id) => getResourceById(id, typeof(Patient)) as Patient;
-        public string DeletePatient(string id) 
+        public string DeletePatient(string id)
         {
             // TODO exception? ApiException xDE 
             processResource(GetPatient(id), "delete");
@@ -125,9 +125,9 @@ namespace FhirClient.Models
             // patient-contactrelationship
             var cs = GetCodeSystem("https://hl7.org/FHIR/v2/0131/v2-0131.cs.canonical.json");
             Viewmodels.PatientEditViewmodel.CodeDropdownForContact = new SelectList(cs.Concept.ToList(), "Code", "Display");
-            
-            
-            
+
+
+
             /* TEST AREA ****************************
             //var list = getResources(new List<ValueSet>(), 50, null, _baseUrl);
             using (var client = new Hl7.Fhir.Rest.FhirClient(_onto))
@@ -152,7 +152,7 @@ namespace FhirClient.Models
         /// </remarks>
         /// <param name="baseUrl"></param>
         /// <returns>RestResponse obj</returns>
-        public IRestResponse getResponseFromUrl(string url)
+        public RestResponse getResponseFromUrl(string url)
         {
             var client = new RestClient(url);
             var request = new RestRequest();
@@ -167,7 +167,7 @@ namespace FhirClient.Models
         /// <param name="id">id as string</param>
         /// <param name="type">the desired type, eg: typeof(Patient)</param>
         /// <returns>Resource or null</returns>
-        private Resource getResourceById(string id, Type type, string url=_baseUrl)
+        private Resource getResourceById(string id, Type type, string url = _baseUrl)
         {
             using (var client = new Hl7.Fhir.Rest.FhirClient(url))
             {
@@ -185,7 +185,7 @@ namespace FhirClient.Models
             }
         }
 
-        private Resource processResource(Resource resourceToBeprocessed, string operation, string url=_baseUrl)
+        private Resource processResource(Resource resourceToBeprocessed, string operation, string url = _baseUrl)
         {
             using (var client = new Hl7.Fhir.Rest.FhirClient(url))
             {
@@ -246,7 +246,7 @@ namespace FhirClient.Models
                 return list;
             }
         }
-     
+
 
         private Patient cleansePatient(Patient pat)
         {
@@ -291,14 +291,14 @@ namespace FhirClient.Models
             };
 
             pat.Identifier.Add(new Identifier()
-                { 
-                    Use = Identifier.IdentifierUse.Official,
-                    System = "http://example.org", 
-                    Value = "0815", 
-                    Type = new CodeableConcept() 
-                    {
-                        Text = "Nice conecpt",
-                        Coding = new List<Coding>()
+            {
+                Use = Identifier.IdentifierUse.Official,
+                System = "http://example.org",
+                Value = "0815",
+                Type = new CodeableConcept()
+                {
+                    Text = "Nice conecpt",
+                    Coding = new List<Coding>()
                         {
                             new Coding()
                             {
@@ -307,26 +307,27 @@ namespace FhirClient.Models
                                 Display = "Funky coding stuff"
                             }
                         }
-                    }
                 }
+            }
             );
             pat.Address.Add(new Address()
-                {
-                    Use = Address.AddressUse.Billing,
-                    Country = "DE", City="Munich",
-                    PostalCode= "55234",
-                    Line = new string[] { "co", "Etage 4", "Heim"}
+            {
+                Use = Address.AddressUse.Billing,
+                Country = "DE",
+                City = "Munich",
+                PostalCode = "55234",
+                Line = new string[] { "co", "Etage 4", "Heim" }
             }
             );
             pat.MaritalStatus = new CodeableConcept()
             {
                 Text = "xDE",
-                Coding = new List<Coding>() 
-                { 
-                    new Coding() 
-                    { 
+                Coding = new List<Coding>()
+                {
+                    new Coding()
+                    {
                         Code = "U", Display="Unmarried", System="http://example.org"
-                    } 
+                    }
                 }
             };
             pat.Communication.Add(new Patient.CommunicationComponent()
@@ -334,7 +335,7 @@ namespace FhirClient.Models
                 Preferred = true,
                 Language = new CodeableConcept("http", "X", "myText")
             });
-            pat.GeneralPractitioner.Add(new ResourceReference("GPReference","smt to display"));
+            pat.GeneralPractitioner.Add(new ResourceReference("GPReference", "smt to display"));
             return pat;
         }
     }
