@@ -24,7 +24,8 @@ namespace FhirClient
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IRepository, Repository>();
-            services.AddMvc();
+            services.AddMvc()
+                .AddRazorRuntimeCompilation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,7 +40,7 @@ namespace FhirClient
                 app.UseExceptionHandler("/Home/Error");
             }
             app.UseStaticFiles();
-            app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions() { IsApiOnly = false, IsDebug=true }); // use before routing
+            app.UseApiResponseAndExceptionWrapper(new AutoWrapperOptions() { IsApiOnly = false, IsDebug = true }); // use before routing
             app.UseRouting();
             app.UseHttpsRedirection();
             app.UseEndpoints(endpoints =>
